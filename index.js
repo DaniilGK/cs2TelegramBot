@@ -7,7 +7,7 @@ const token = (process.env.TELEGRAM_BOT_TOKEN || '').trim();
 const bot = token ? new Telegraf(token) : null;
 
 const port = Number(process.env.PORT || 3000);
-const webAppUrl = process.env.WEBAPP_URL || 'http://localhost:5173';
+const webAppUrl = (process.env.WEBAPP_URL || 'http://localhost:5173').trim();
 
 const app = express();
 const webDistPath = path.join(__dirname, 'rushskins-frontend', 'rushskins', 'dist');
