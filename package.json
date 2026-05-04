@@ -1,0 +1,32 @@
+{
+  "name": "cs2telegrambot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "bot": "node index.js",
+    "web:dev": "npm --prefix rushskins-frontend/rushskins run dev -- --host",
+    "web:build": "npm --prefix rushskins-frontend/rushskins run build",
+    "dev": "concurrently -n BOT,WEB -c green,cyan \"npm run bot\" \"npm run web:dev\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DaniilGK/csTelegramBot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DaniilGK/csTelegramBot/issues"
+  },
+  "homepage": "https://github.com/DaniilGK/csTelegramBot#readme",
+  "dependencies": {
+    "dotenv": "^17.2.4",
+    "express": "^5.1.0",
+    "telegraf": "^4.16.3"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  }
+}

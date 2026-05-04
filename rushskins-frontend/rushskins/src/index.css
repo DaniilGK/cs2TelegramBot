@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --tg-viewport-height: 100vh;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+html, body, #root {
+  height: 100%;
+  overscroll-behavior: none;
+}
+
+body {
+  background: #0A0A0C;
+  color: #F0EDE8;
+  font-family: 'DM Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 0; }
+
+/* Rarity bar glow effects */
+.rarity-glow-covert    { box-shadow: 0 0 8px #EB4B4B55; }
+.rarity-glow-classified { box-shadow: 0 0 8px #D32CE655; }
+.rarity-glow-restricted { box-shadow: 0 0 8px #8847FF55; }
+
+/* Coin number flicker animation for tapper */
+@keyframes coinFloat {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-40px) scale(0.8); opacity: 0; }
+}
+.coin-float { animation: coinFloat 0.8s ease forwards; }
+
+/* Shimmer loading effect */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, #18181F 25%, #1F1F28 50%, #18181F 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
