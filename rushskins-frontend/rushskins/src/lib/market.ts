@@ -1,6 +1,5 @@
 import type { SkinItem } from '@/store/useAppStore'
 
-// --- Mock data (replace with real LIS-SKINS API calls) ---
 export const MOCK_SKINS: SkinItem[] = [
   {
     id: 'awp-dragon-lore',
@@ -64,8 +63,7 @@ export const MOCK_SKINS: SkinItem[] = [
   },
 ]
 
-// --- LIS-SKINS API client (stub — wire up real endpoints) ---
-const LIS_BASE = 'https://lis-skins.ru/api'
+const API_BASE = (import.meta.env.VITE_API_BASE as string | undefined)?.replace(/\/+$/, '')
 
 export interface LisSkinsItem {
   id:       number
@@ -84,16 +82,15 @@ export async function fetchMarketItems(params?: {
   limit?: number
   offset?: number
 }): Promise<SkinItem[]> {
-  // TODO: Replace with real LIS-SKINS API call
-  // const query = new URLSearchParams({ ...params, limit: String(params?.limit ?? 20) })
-  // const res = await fetch(`${LIS_BASE}/items?${query}`, {
-  //   headers: { Authorization: `Bearer ${import.meta.env.VITE_LIS_API_KEY}` }
-  // })
-  // const data: LisSkinsItem[] = await res.json()
-  // return data.map(mapLisItem)
+  if (API_BASE) {
+    const query = new URLSearchParams()
+    if (params?.search) query.set('search', params.search)
+    const res = await fetch(`${API_BASE}/api/market/items?${query.toString()}`)
+    if (!res.ok) throw new Error(`Market API error: ${res.status}`)
+    return (await res.json()) as SkinItem[]
+  }
 
-  // Simulated delay + mock data
-  await new Promise(r => setTimeout(r, 400))
+  await new Promise(r => setTimeout(r, 250))
   let items = [...MOCK_SKINS]
   if (params?.search) {
     const q = params.search.toLowerCase()
@@ -104,8 +101,17 @@ export async function fetchMarketItems(params?: {
 }
 
 export async function purchaseSkin(itemId: string, userId: string): Promise<{ success: boolean; tradeId?: string }> {
-  // TODO: Wire up real purchase endpoint + BullMQ job
-  await new Promise(r => setTimeout(r, 800))
+  if (API_BASE) {
+    const res = await fetch(`${API_BASE}/api/market/purchase`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ itemId, userId }),
+    })
+    if (!res.ok) throw new Error(`Purchase API error: ${res.status}`)
+    return (await res.json()) as { success: boolean; tradeId?: string }
+  }
+
+  await new Promise(r => setTimeout(r, 500))
   return { success: true, tradeId: `trade_${Date.now()}` }
 }
 
