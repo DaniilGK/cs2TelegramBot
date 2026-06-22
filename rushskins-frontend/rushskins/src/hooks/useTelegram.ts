@@ -24,6 +24,26 @@ interface UseTelegramReturn {
   close: () => void
 }
 
+interface BackendUser {
+  id: string
+  username?: string
+  firstName?: string
+  balanceCents?: number
+  coins?: number
+  energy?: number
+  maxEnergy?: number
+  level?: number
+  xp?: number
+  avatarUrl?: string
+  tradeUrl?: string
+}
+
+interface TelegramAuthResponse {
+  token?: string
+  accessToken?: string
+  user?: BackendUser
+}
+
 export function useTelegram(): UseTelegramReturn {
   const [tgUser, setTgUser]       = useState<TelegramUser | null>(null)
   const [isAuthReady, setAuthReady] = useState(false)
@@ -53,24 +73,30 @@ export function useTelegram(): UseTelegramReturn {
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ initData }),
       })
-        .then(r => r.json())
-        .then(({ token, user: dbUser }) => {
-          if (token) {
-            localStorage.setItem('rushskins_token', token)
-            // Обновляем store реальными данными из БД
-            setUser({
-              id:          dbUser.id,
-              username:    dbUser.username ?? dbUser.firstName ?? 'Player',
-              balance:     dbUser.balanceCents,
-              coins:       dbUser.coins,
-              energy:      dbUser.energy,
-              maxEnergy:   dbUser.maxEnergy,
-              level:       dbUser.level,
-              xp:          dbUser.xp,
-              avatarUrl:   dbUser.avatarUrl,
-              tradeUrl:    dbUser.tradeUrl,
-            })
+        .then(async (res) => {
+          if (!res.ok) {
+            const message = await res.text()
+            throw new Error(message || `Telegram auth failed: ${res.status}`)
           }
+          return res.json() as Promise<TelegramAuthResponse>
+        })
+        .then(({ token, accessToken, user: dbUser }) => {
+          const jwt = token ?? accessToken
+          if (!jwt || !dbUser) return
+
+          localStorage.setItem('rushskins_token', jwt)
+          setUser({
+            id:        dbUser.id,
+            username:  dbUser.username ?? dbUser.firstName ?? user?.username ?? 'Player',
+            balance:   dbUser.balanceCents ?? 0,
+            coins:     dbUser.coins ?? 0,
+            energy:    dbUser.energy ?? 500,
+            maxEnergy: dbUser.maxEnergy ?? 500,
+            level:     dbUser.level ?? 1,
+            xp:        dbUser.xp ?? 0,
+            avatarUrl: dbUser.avatarUrl,
+            tradeUrl:  dbUser.tradeUrl,
+          })
         })
         .catch(err => console.error('Auth error:', err))
         .finally(() => setAuthReady(true))
