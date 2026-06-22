@@ -5,6 +5,7 @@ import { create } from 'zustand'
 export interface User {
   id: string
   username: string
+  bio?: string
   balance: number      // в центах
   coins: number
   energy: number
@@ -13,7 +14,13 @@ export interface User {
   xp: number
   avatarUrl?: string
   tradeUrl?: string
+  itemsPrivacy?: PrivacyOption
+  followersPrivacy?: PrivacyOption
+  messagesPrivacy?: PrivacyOption
+  showProfilePhoto?: boolean
 }
+
+export type PrivacyOption = 'everyone' | 'friends' | 'nobody'
 
 export interface SkinItem {
   id: string
@@ -34,6 +41,7 @@ interface AppState {
   activeTab: 'home' | 'market' | 'cases' | 'friends' | 'profile'
 
   setUser: (user: User) => void                          // ← новый action
+  updateUser: (user: Partial<User>) => void
   tapCoin: () => void
   setActiveTab: (tab: AppState['activeTab']) => void
   addToCart: (id: string) => void
@@ -53,13 +61,18 @@ export const useAppStore = create<AppState>((set, get) => ({
     maxEnergy: 500,
     level:    1,
     xp:       0,
+    itemsPrivacy: 'everyone',
+    followersPrivacy: 'everyone',
+    messagesPrivacy: 'everyone',
+    showProfilePhoto: true,
   },
   marketItems: [],
   cartItems:   [],
   activeTab:   'home',
 
   // ─── Загружаем реального пользователя из бэкенда ────────────────────────
-  setUser: (user) => set({ user }),
+  setUser: (user) => set(state => ({ user: { ...state.user, ...user } })),
+  updateUser: (user) => set(state => ({ user: { ...state.user, ...user } })),
 
   tapCoin: () => set(state => {
     if (state.user.energy <= 0) return state

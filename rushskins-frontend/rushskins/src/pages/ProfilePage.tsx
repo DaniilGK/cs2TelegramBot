@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useAppStore } from '@/store/useAppStore'
 import { useTelegram } from '@/hooks/useTelegram'
 import { createTelegramTopUpInvoice } from '@/lib/payments'
@@ -15,9 +16,23 @@ export function ProfilePage() {
   const [tradeUrl, setTradeUrl] = useState('')
   const [isDepositing, setIsDepositing] = useState(false)
   const [depositError, setDepositError] = useState<string | null>(null)
+  const [toast, setToast] = useState<string | null>(null)
 
   const displayName = user.username || tgUser?.first_name || 'Player'
   const initials = displayName.slice(0, 2).toUpperCase()
+  const avatarUrl = user.showProfilePhoto !== false && (user.avatarUrl || tgUser?.photo_url)
+
+  const showToast = (message: string) => {
+    setToast(message)
+    setTimeout(() => setToast(null), 2000)
+  }
+
+  const handleShareProfile = async () => {
+    const link = `https://t.me/rush_skins_bot?start=profile_${user.id}`
+    await navigator.clipboard?.writeText(link)
+    haptic('light')
+    showToast('Ссылка скопирована!')
+  }
 
   const handleDeposit = async () => {
     if (isDepositing) return
@@ -48,15 +63,25 @@ export function ProfilePage() {
 
       {/* Avatar + name */}
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 rounded-2xl bg-accent-orange/20 border border-accent-orange/30 flex items-center justify-center shrink-0">
-          <span className="font-display text-2xl font-semibold text-accent-orange">{initials}</span>
+        <div className="w-16 h-16 rounded-2xl bg-accent-orange/20 border border-accent-orange/30 flex items-center justify-center overflow-hidden shrink-0">
+          {avatarUrl ? (
+            <img src={avatarUrl} alt={displayName} className="w-full h-full object-cover" />
+          ) : (
+            <span className="font-display text-2xl font-semibold text-accent-orange">{initials}</span>
+          )}
         </div>
-        <div className="flex-1">
-          <h1 className="font-display text-xl font-semibold text-text-primary tracking-wide">{displayName}</h1>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h1 className="font-display text-xl font-semibold text-text-primary tracking-wide truncate">{displayName}</h1>
+            <button
+              onClick={handleShareProfile}
+              className="ml-auto px-2.5 py-1 rounded-lg bg-bg-raised border border-border text-[11px] text-text-secondary font-body active:scale-95 transition-all"
+            >
+              Share
+            </button>
+          </div>
           <div className="flex items-center gap-2 mt-0.5">
             <span className="text-xs font-body text-text-secondary">Level {user.level}</span>
-            <span className="text-text-muted">·</span>
-            <span className="text-xs font-body text-text-secondary">{user.coins.toLocaleString()} coins</span>
           </div>
         </div>
       </div>
@@ -154,6 +179,15 @@ export function ProfilePage() {
         )}
       </div>
 
+      {/* Navigation */}
+      <div className="bg-bg-raised border border-border rounded-2xl overflow-hidden">
+        <NavRow icon="✎" label="Edit Profile" to="/profile/edit-profile" />
+        <NavRow icon="◆" label="Upgrade" to="/profile/upgrade" />
+        <NavRow icon="↗" label="To Rush Skins Community" href="https://t.me/rush_skins_bot" />
+        <NavRow icon="⚙" label="App Settings" to="/profile/app-settings" />
+        <NavRow icon="🌐" label="Web Version" href="https://cs2-telegram-bot.vercel.app" />
+      </div>
+
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
         {[
@@ -168,6 +202,37 @@ export function ProfilePage() {
         ))}
       </div>
 
+      {toast && (
+        <div className="fixed left-1/2 bottom-24 z-[60] -translate-x-1/2 rounded-xl bg-bg-overlay border border-border px-4 py-2 text-sm text-text-primary shadow-lg">
+          {toast}
+        </div>
+      )}
+
     </div>
+  )
+}
+
+function NavRow({ icon, label, to, href }: { icon: string; label: string; to?: string; href?: string }) {
+  const className = 'w-full px-4 py-3 flex items-center gap-3 border-b border-border/60 last:border-b-0 active:bg-bg-overlay transition-colors'
+  const content = (
+    <>
+      <span className="w-8 h-8 rounded-xl bg-bg-overlay flex items-center justify-center text-accent-orange text-sm">{icon}</span>
+      <span className="flex-1 font-display text-base font-semibold text-text-primary tracking-wide text-left">{label}</span>
+      <span className="text-text-muted">›</span>
+    </>
+  )
+
+  if (href) {
+    return (
+      <a className={className} href={href} target="_blank" rel="noreferrer">
+        {content}
+      </a>
+    )
+  }
+
+  return (
+    <Link className={className} to={to ?? '/profile'}>
+      {content}
+    </Link>
   )
 }

@@ -7,6 +7,12 @@
 :root {
   --tg-viewport-height: 100vh;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --bg-primary: #0A0A0C;
+  --text-primary: #FFFFFF;
+  --color-accent: #FF5C00;
+  --rs-bg: #0A0A0C;
+  --rs-text: #F0EDE8;
+  --rs-accent: #FF5C00;
 }
 
 * {
@@ -20,8 +26,8 @@ html, body, #root {
 }
 
 body {
-  background: #0A0A0C;
-  color: #F0EDE8;
+  background: var(--bg-primary);
+  color: var(--text-primary);
   font-family: 'DM Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
 }

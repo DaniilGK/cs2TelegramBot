@@ -1,0 +1,165 @@
+# RushSkins — правила для Cursor Agent
+
+## Стек проекта
+- Frontend: React + TypeScript + Vite + Tailwind CSS (rushskins-frontend/rushskins)
+- Backend: NestJS + TypeORM + PostgreSQL (rushskins-backend)
+- Bot: Telegraf (index.js, корень)
+- State: Zustand (useAppStore)
+- Deploy: Frontend → Vercel, Backend → Railway
+
+## Главные правила
+
+1. НИКОГДА не меняй файлы авторизации: useTelegram.ts, auth.service.ts, jwt.strategy.ts
+2. НИКОГДА не трогай .env файлы
+3. ВСЕГДА запускай npm run build после изменений и убеждайся что сборка без ошибок
+4. НИКОГДА не добавляй новые npm пакеты без явного указания в задаче
+5. ВСЕГДА следуй существующему дизайн-системе (см. ниже)
+6. Все новые страницы создавай в src/pages/, компоненты в src/components/
+7. Роуты добавляй в App.tsx
+
+---
+
+## DESIGN SYSTEM — строго следуй этому
+
+### Цвета — только из tailwind.config.ts, никаких hex напрямую
+Фоны:
+- bg-bg-base      → основной фон страницы
+- bg-bg-surface   → навбар, шапка
+- bg-bg-raised    → карточки, блоки
+- bg-bg-overlay   → инпуты, вложенные элементы
+
+Акценты:
+- text-accent-orange / bg-accent-orange → главный акцент #FF5C00
+- bg-accent-dim                         → hover/active состояние
+- text-gold / bg-gold                   → золотой акцент
+
+Текст:
+- text-text-primary   → основной текст
+- text-text-secondary → второстепенный
+- text-text-muted     → подписи, плейсхолдеры
+
+Бордеры:
+- border-border        → стандартный
+- border-border-bright → выделенный
+
+### Типографика
+- font-display → "Barlow Condensed" — заголовки, кнопки, цифры, имена
+- font-body    → "DM Sans"          — описания, лейблы, мелкий текст
+- font-mono    → "JetBrains Mono"   — цены, коды, числа
+
+### Радиусы
+- rounded-xl  → кнопки, инпуты
+- rounded-2xl → карточки, блоки
+- rounded-3xl → крупные контейнеры
+- rounded-full → теги, аватары, пилюли
+
+---
+
+## Паттерны — копируй точно
+
+### Обёртка страницы
+```tsx
+<div className="flex flex-col px-4 pt-4 pb-4 gap-4 overflow-y-auto animate-fade-in">
+```
+
+### Карточка / блок
+```tsx
+<div className="bg-bg-raised border border-border rounded-2xl p-4">
+```
+
+### Кнопка primary
+```tsx
+<button className="px-4 py-2 bg-accent-orange text-white rounded-xl font-display text-sm font-semibold active:bg-accent-dim active:scale-95 transition-all">
+```
+
+### Кнопка secondary
+```tsx
+<button className="px-4 py-2 bg-bg-overlay border border-border text-text-secondary rounded-xl font-display text-sm font-semibold active:scale-95 transition-all">
+```
+
+### Инпут
+```tsx
+<input className="w-full bg-bg-overlay border border-border rounded-xl px-3 py-2 text-sm font-body text-text-primary placeholder-text-muted outline-none focus:border-accent-orange/50 transition-colors" />
+```
+
+### Кнопка "← Назад" (обязательна на всех подстраницах)
+```tsx
+<button onClick={() => navigate(-1)} className="flex items-center gap-2 text-text-secondary font-body text-sm mb-4 active:text-text-primary transition-colors">
+  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M15 18l-6-6 6-6"/>
+  </svg>
+  Назад
+</button>
+```
+
+### Строка-навигация (иконка + название + стрелка вправо)
+```tsx
+<button className="w-full flex items-center gap-3 px-4 py-3 bg-bg-raised border border-border rounded-2xl active:scale-95 transition-all">
+  <span className="text-lg">🔗</span>
+  <span className="font-display text-base font-semibold text-text-primary tracking-wide flex-1 text-left">Название</span>
+  <svg className="w-4 h-4 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M9 18l6-6-6-6"/>
+  </svg>
+</button>
+```
+
+### Лейбл секции (заголовок над группой элементов)
+```tsx
+<p className="text-xs text-text-muted font-body uppercase tracking-wider">НАЗВАНИЕ</p>
+```
+
+### Toggle (одна строка: текст слева, переключатель справа)
+```tsx
+<div className="flex items-center justify-between py-3 border-b border-border">
+  <span className="font-body text-sm text-text-primary">Название</span>
+  <button
+    onClick={() => setActive(v => !v)}
+    className={`w-12 h-6 rounded-full transition-colors relative ${active ? 'bg-accent-orange' : 'bg-bg-overlay border border-border'}`}
+  >
+    <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${active ? 'translate-x-7' : 'translate-x-1'}`} />
+  </button>
+</div>
+```
+
+### Toast уведомление
+```tsx
+const [toast, setToast] = useState('')
+const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 2000) }
+
+// В JSX:
+{toast && (
+  <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-bg-raised border border-border rounded-xl px-4 py-2 text-sm font-body text-text-primary animate-fade-in shadow-lg">
+    {toast}
+  </div>
+)}
+```
+
+### Лейбл редкости скина
+```tsx
+const RARITY_COLORS: Record<string, string> = {
+  consumer:   'text-rarity-consumer',
+  industrial: 'text-rarity-industrial',
+  milspec:    'text-rarity-milspec',
+  restricted: 'text-rarity-restricted',
+  classified: 'text-rarity-classified',
+  covert:     'text-rarity-covert',
+  contraband: 'text-rarity-contraband',
+}
+```
+
+## API
+- Backend URL: https://cs2telegrambot-production.up.railway.app
+- Frontend URL: https://cs2-telegram-bot.vercel.app
+- Все API запросы: fetch с заголовком Authorization: Bearer ${localStorage.getItem('rushskins_token')}
+
+## Как делать API запросы из фронтенда
+```tsx
+const res = await fetch(`${import.meta.env.VITE_API_BASE}/api/endpoint`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${localStorage.getItem('rushskins_token')}`,
+  },
+  body: JSON.stringify(data),
+})
+```

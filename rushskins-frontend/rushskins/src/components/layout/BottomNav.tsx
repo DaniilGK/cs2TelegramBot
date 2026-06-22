@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom'
 import { useAppStore } from '@/store/useAppStore'
 import { useTelegram } from '@/hooks/useTelegram'
 import clsx from 'clsx'
@@ -5,6 +6,7 @@ import clsx from 'clsx'
 const TABS = [
   {
     id: 'home' as const,
+    path: '/',
     label: 'Home',
     icon: (active: boolean) => (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke={active ? '#FF5C00' : 'currentColor'} strokeWidth="1.8">
@@ -14,6 +16,7 @@ const TABS = [
   },
   {
     id: 'market' as const,
+    path: '/market',
     label: 'Market',
     icon: (active: boolean) => (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke={active ? '#FF5C00' : 'currentColor'} strokeWidth="1.8">
@@ -23,6 +26,7 @@ const TABS = [
   },
   {
     id: 'cases' as const,
+    path: '/cases',
     label: 'Cases',
     icon: (active: boolean) => (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke={active ? '#FF5C00' : 'currentColor'} strokeWidth="1.8">
@@ -32,6 +36,7 @@ const TABS = [
   },
   {
     id: 'friends' as const,
+    path: '/friends',
     label: 'Friends',
     icon: (active: boolean) => (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke={active ? '#FF5C00' : 'currentColor'} strokeWidth="1.8">
@@ -41,6 +46,7 @@ const TABS = [
   },
   {
     id: 'profile' as const,
+    path: '/profile',
     label: 'Profile',
     icon: (active: boolean) => (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke={active ? '#FF5C00' : 'currentColor'} strokeWidth="1.8">
@@ -53,6 +59,7 @@ const TABS = [
 export function BottomNav() {
   const { activeTab, setActiveTab } = useAppStore()
   const { haptic } = useTelegram()
+  const navigate = useNavigate()
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50"
@@ -71,6 +78,7 @@ export function BottomNav() {
                 onClick={() => {
                   haptic('light')
                   setActiveTab(tab.id)
+                  navigate(tab.path)
                 }}
               >
                 {tab.icon(active)}
