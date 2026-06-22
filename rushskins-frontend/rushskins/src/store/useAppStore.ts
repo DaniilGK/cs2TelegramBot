@@ -1,11 +1,12 @@
+// src/store/useAppStore.ts  — добавлен setUser + реальный тип User
+
 import { create } from 'zustand'
 
 export interface User {
   id: string
   username: string
-  steamId?: string
-  balance: number        // fiat balance in cents
-  coins: number          // internal click-to-earn currency
+  balance: number      // в центах
+  coins: number
   energy: number
   maxEnergy: number
   level: number
@@ -20,7 +21,7 @@ export interface SkinItem {
   weapon: string
   wear: string
   rarity: 'consumer' | 'industrial' | 'milspec' | 'restricted' | 'classified' | 'covert' | 'contraband'
-  price: number          // in cents
+  price: number
   imageUrl: string
   float?: number
   inInventory?: boolean
@@ -32,30 +33,33 @@ interface AppState {
   cartItems: string[]
   activeTab: 'home' | 'market' | 'cases' | 'friends' | 'profile'
 
-  // actions
+  setUser: (user: User) => void                          // ← новый action
   tapCoin: () => void
   setActiveTab: (tab: AppState['activeTab']) => void
   addToCart: (id: string) => void
   removeFromCart: (id: string) => void
   setMarketItems: (items: SkinItem[]) => void
   refillEnergy: () => void
+  addBalance: (amountCents: number) => void
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
   user: {
-    id: 'demo-user',
-    username: 'Rush_Player',
-    balance: 4250_00,       // $4,250.00
-    coins: 12_480,
-    energy: 340,
+    id:       'demo-user',
+    username: 'Loading...',
+    balance:  0,
+    coins:    0,
+    energy:   500,
     maxEnergy: 500,
-    level: 7,
-    xp: 2340,
-    avatarUrl: undefined,
+    level:    1,
+    xp:       0,
   },
   marketItems: [],
-  cartItems: [],
-  activeTab: 'home',
+  cartItems:   [],
+  activeTab:   'home',
+
+  // ─── Загружаем реального пользователя из бэкенда ────────────────────────
+  setUser: (user) => set({ user }),
 
   tapCoin: () => set(state => {
     if (state.user.energy <= 0) return state
@@ -63,25 +67,16 @@ export const useAppStore = create<AppState>((set, get) => ({
     return {
       user: {
         ...state.user,
-        coins: state.user.coins + gain,
+        coins:  state.user.coins + gain,
         energy: Math.max(0, state.user.energy - 1),
       },
     }
   }),
 
-  setActiveTab: (tab) => set({ activeTab: tab }),
-
-  addToCart: (id) => set(state => ({
-    cartItems: state.cartItems.includes(id) ? state.cartItems : [...state.cartItems, id],
-  })),
-
-  removeFromCart: (id) => set(state => ({
-    cartItems: state.cartItems.filter(i => i !== id),
-  })),
-
-  setMarketItems: (items) => set({ marketItems: items }),
-
-  refillEnergy: () => set(state => ({
-    user: { ...state.user, energy: state.user.maxEnergy },
-  })),
+  setActiveTab:    (tab)   => set({ activeTab: tab }),
+  addToCart:       (id)    => set(s => ({ cartItems: s.cartItems.includes(id) ? s.cartItems : [...s.cartItems, id] })),
+  removeFromCart:  (id)    => set(s => ({ cartItems: s.cartItems.filter(i => i !== id) })),
+  setMarketItems:  (items) => set({ marketItems: items }),
+  refillEnergy:    ()      => set(s => ({ user: { ...s.user, energy: s.user.maxEnergy } })),
+  addBalance:      (amt)   => set(s => ({ user: { ...s.user, balance: s.user.balance + amt } })),
 }))

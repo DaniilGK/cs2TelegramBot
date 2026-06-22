@@ -8,7 +8,9 @@
     "bot": "node index.js",
     "web:dev": "npm --prefix rushskins-frontend/rushskins run dev -- --host",
     "web:build": "npm --prefix rushskins-frontend/rushskins run build",
-    "dev": "concurrently -n BOT,WEB -c green,cyan \"npm run bot\" \"npm run web:dev\""
+    "backend:dev": "npm --prefix rushskins-backend run start:dev",
+    "backend:build": "npm --prefix rushskins-backend run build",
+    "dev": "concurrently -n BOT,BACKEND,WEB -c green,magenta,cyan \"npm run bot\" \"npm run backend:dev\" \"npm run web:dev\""
   },
   "repository": {
     "type": "git",

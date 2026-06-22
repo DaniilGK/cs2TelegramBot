@@ -1,19 +1,46 @@
 import { useState } from 'react'
 import { useAppStore } from '@/store/useAppStore'
 import { useTelegram } from '@/hooks/useTelegram'
+import { createTelegramTopUpInvoice } from '@/lib/payments'
 
 function formatUSD(cents: number) {
   return `$${(cents / 100).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
 }
 
 export function ProfilePage() {
-  const { user } = useAppStore()
-  const { haptic } = useTelegram()
+  const { user, addBalance } = useAppStore()
+  const { haptic, openInvoice } = useTelegram()
   const [steamLinked] = useState(false)
   const [showTradeInput, setShowTradeInput] = useState(false)
   const [tradeUrl, setTradeUrl] = useState('')
+  const [isDepositing, setIsDepositing] = useState(false)
+  const [depositError, setDepositError] = useState<string | null>(null)
 
   const initials = user.username.slice(0, 2).toUpperCase()
+
+  const handleDeposit = async () => {
+    if (isDepositing) return
+    haptic('medium')
+    setDepositError(null)
+    setIsDepositing(true)
+
+    try {
+      const amountCents = 1000
+      const invoice = await createTelegramTopUpInvoice({ userId: user.id, amountCents })
+      const status = await openInvoice(invoice.invoiceLink)
+
+      if (status === 'paid') {
+        addBalance(invoice.amountCents)
+        haptic('heavy')
+      } else if (status !== 'pending') {
+        setDepositError('Payment was not completed.')
+      }
+    } catch (error) {
+      setDepositError(error instanceof Error ? error.message : 'Payment failed.')
+    } finally {
+      setIsDepositing(false)
+    }
+  }
 
   return (
     <div className="flex flex-col px-4 pt-4 pb-4 gap-4 overflow-y-auto animate-fade-in">
@@ -41,10 +68,11 @@ export function ProfilePage() {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => haptic('medium')}
-            className="px-4 py-2 bg-accent-orange text-white rounded-xl font-display text-sm font-semibold active:bg-accent-dim active:scale-95 transition-all"
+            onClick={handleDeposit}
+            disabled={isDepositing}
+            className="px-4 py-2 bg-accent-orange text-white rounded-xl font-display text-sm font-semibold active:bg-accent-dim active:scale-95 transition-all disabled:opacity-60"
           >
-            Deposit
+            {isDepositing ? 'Opening...' : 'Deposit'}
           </button>
           <button
             onClick={() => haptic('light')}
@@ -54,6 +82,9 @@ export function ProfilePage() {
           </button>
         </div>
       </div>
+      {depositError && (
+        <p className="text-xs text-rarity-covert font-body -mt-2">{depositError}</p>
+      )}
 
       {/* Steam section */}
       <div className="bg-bg-raised border border-border rounded-2xl overflow-hidden">

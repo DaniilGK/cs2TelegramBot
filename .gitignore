@@ -1,6 +1,7 @@
 .env
 .env.*
 !.env.example
+!rushskins-frontend/rushskins/.env.development
 
 node_modules/
 npm-debug.log*
