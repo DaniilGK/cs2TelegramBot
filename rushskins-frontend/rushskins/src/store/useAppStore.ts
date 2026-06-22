@@ -46,7 +46,7 @@ interface AppState {
 export const useAppStore = create<AppState>((set, get) => ({
   user: {
     id:       'demo-user',
-    username: 'Loading...',
+    username: '',
     balance:  0,
     coins:    0,
     energy:   500,

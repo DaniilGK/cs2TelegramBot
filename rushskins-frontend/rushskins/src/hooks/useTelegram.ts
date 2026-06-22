@@ -68,6 +68,7 @@ export function useTelegram(): UseTelegramReturn {
     // Авторизация: шлём initData на бэкенд
     const initData = tg.initData
     if (initData && API_BASE) {
+      console.log('initData:', initData)
       fetch(`${API_BASE}/api/auth/telegram`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -81,24 +82,25 @@ export function useTelegram(): UseTelegramReturn {
           return res.json() as Promise<TelegramAuthResponse>
         })
         .then(({ token, accessToken, user: dbUser }) => {
+          console.log('auth response:', { token, user: dbUser })
           const jwt = token ?? accessToken
           if (!jwt || !dbUser) return
 
           localStorage.setItem('rushskins_token', jwt)
           setUser({
             id:        dbUser.id,
-            username:  dbUser.username ?? dbUser.firstName ?? user?.username ?? 'Player',
+            username:  dbUser.username ?? dbUser.firstName ?? 'Player',
             balance:   dbUser.balanceCents ?? 0,
             coins:     dbUser.coins ?? 0,
-            energy:    dbUser.energy ?? 500,
-            maxEnergy: dbUser.maxEnergy ?? 500,
-            level:     dbUser.level ?? 1,
+            energy:    dbUser.energy ?? 0,
+            maxEnergy: dbUser.maxEnergy ?? 0,
+            level:     dbUser.level ?? 0,
             xp:        dbUser.xp ?? 0,
             avatarUrl: dbUser.avatarUrl,
             tradeUrl:  dbUser.tradeUrl,
           })
         })
-        .catch(err => console.error('Auth error:', err))
+        .catch(error => console.error('auth error:', error))
         .finally(() => setAuthReady(true))
     } else {
       setAuthReady(true)

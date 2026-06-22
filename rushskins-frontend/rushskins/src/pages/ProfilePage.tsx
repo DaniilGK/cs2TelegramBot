@@ -9,14 +9,15 @@ function formatUSD(cents: number) {
 
 export function ProfilePage() {
   const { user, addBalance } = useAppStore()
-  const { haptic, openInvoice } = useTelegram()
+  const { haptic, openInvoice, tgUser } = useTelegram()
   const [steamLinked] = useState(false)
   const [showTradeInput, setShowTradeInput] = useState(false)
   const [tradeUrl, setTradeUrl] = useState('')
   const [isDepositing, setIsDepositing] = useState(false)
   const [depositError, setDepositError] = useState<string | null>(null)
 
-  const initials = user.username.slice(0, 2).toUpperCase()
+  const displayName = user.username || tgUser?.first_name || 'Player'
+  const initials = displayName.slice(0, 2).toUpperCase()
 
   const handleDeposit = async () => {
     if (isDepositing) return
@@ -51,7 +52,7 @@ export function ProfilePage() {
           <span className="font-display text-2xl font-semibold text-accent-orange">{initials}</span>
         </div>
         <div className="flex-1">
-          <h1 className="font-display text-xl font-semibold text-text-primary tracking-wide">{user.username}</h1>
+          <h1 className="font-display text-xl font-semibold text-text-primary tracking-wide">{displayName}</h1>
           <div className="flex items-center gap-2 mt-0.5">
             <span className="text-xs font-body text-text-secondary">Level {user.level}</span>
             <span className="text-text-muted">·</span>
@@ -156,9 +157,9 @@ export function ProfilePage() {
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">
         {[
-          { label: 'Purchased', value: '12' },
-          { label: 'Opened cases', value: '47' },
-          { label: 'Friends', value: '8' },
+          { label: 'Purchased', value: '0' },
+          { label: 'Opened cases', value: '0' },
+          { label: 'Friends', value: '0' },
         ].map(s => (
           <div key={s.label} className="bg-bg-raised border border-border rounded-xl p-3 text-center">
             <p className="font-display text-xl font-semibold text-text-primary">{s.value}</p>
