@@ -56,6 +56,12 @@ export class User {
   @Column({ type: 'int', default: 0 })
   xp: number
 
+  @Column({ type: 'int', default: 0 })
+  tickets: number
+
+  @Column({ type: 'varchar', nullable: true })
+  faction: string | null
+
   // Referral
   @Column({ name: 'referral_code', unique: true, nullable: true })
   referralCode?: string
