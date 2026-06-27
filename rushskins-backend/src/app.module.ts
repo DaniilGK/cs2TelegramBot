@@ -53,7 +53,7 @@ import { CasesModule } from './modules/cases/cases.module'
           Season,
           SeasonScore,
         ],
-        synchronize: config.get<string>('app.nodeEnv') === 'development',
+        synchronize: true,
         logging:     config.get<string>('app.nodeEnv') === 'development',
       }),
     }),
