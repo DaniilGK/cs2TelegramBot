@@ -18,6 +18,7 @@ import { SeasonScore } from './modules/leaderboard/entities/season-score.entity'
 import { AuthModule } from './modules/auth/auth.module'
 import { MarketModule } from './modules/market/market.module'
 import { PaymentsModule } from './modules/payments/payments.module'
+import { CasesModule } from './modules/cases/cases.module'
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { PaymentsModule } from './modules/payments/payments.module'
     AuthModule,
     MarketModule,
     PaymentsModule,
+    CasesModule,
   ],
 })
 export class AppModule {}

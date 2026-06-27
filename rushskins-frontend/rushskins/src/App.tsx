@@ -9,22 +9,13 @@ import { ProfilePage } from '@/pages/ProfilePage'
 import { ArenaPage } from '@/pages/ArenaPage'
 import { LeaderboardPage } from '@/pages/LeaderboardPage'
 import { DepositPage } from '@/pages/DepositPage'
+import { CasesPage } from '@/pages/cases/CasesPage'
+import { CaseDetailPage } from '@/pages/cases/CaseDetailPage'
+import { CaseOpenPage } from '@/pages/cases/CaseOpenPage'
 import { EditProfilePage } from '@/pages/profile/EditProfilePage'
 import { AppSettingsPage } from '@/pages/profile/AppSettingsPage'
 import { UpgradePage } from '@/pages/profile/UpgradePage'
 import { applyStoredTheme } from '@/lib/theme'
-
-function CasesPage() {
-  return (
-    <div className="flex flex-col items-center justify-center h-full gap-3 px-4 animate-fade-in">
-      <span className="text-5xl">📦</span>
-      <h1 className="font-sans text-2xl font-semibold text-text-primary tracking-wide">Cases</h1>
-      <p className="text-text-secondary font-sans text-sm text-center">
-        Case system coming in Sprint 3.<br/>Algorithm generates custom cases from available inventory.
-      </p>
-    </div>
-  )
-}
 
 export default function App() {
   useTelegram()
@@ -54,6 +45,8 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/market" element={<MarketPage />} />
             <Route path="/cases" element={<CasesPage />} />
+            <Route path="/cases/:id" element={<CaseDetailPage />} />
+            <Route path="/cases/:id/open" element={<CaseOpenPage />} />
             <Route path="/arena" element={<ArenaPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/deposit" element={<DepositPage />} />

@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core'
 import { ConfigService } from '@nestjs/config'
+import { DataSource } from 'typeorm'
 import { AppModule } from './app.module'
+import { seedCases } from './modules/cases/cases.seed'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -18,6 +20,7 @@ async function bootstrap() {
   })
 
   await app.listen(port)
+  await seedCases(app.get(DataSource))
   // eslint-disable-next-line no-console
   console.log(`Backend listening on http://localhost:${port}`)
 }

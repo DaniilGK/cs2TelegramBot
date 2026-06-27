@@ -3,108 +3,109 @@
 ## ✅ Сделано
 - [x] Telegram бот — /start, /about, WebApp кнопка
 - [x] Frontend — базовый UI (Home, Market, Profile, навигация)
-- [x] Tapper механика (энергия, XP, анимации)
 - [x] Деплой бэкенда на Railway
 - [x] Деплой фронтенда на Vercel
 - [x] PostgreSQL база данных на Railway
 - [x] Auth модуль — авторизация через Telegram initData + JWT
 - [x] Таблица users создана в БД
 - [x] Фронт подключён к бэкенду (VITE_API_BASE)
-- [x] Реальный пользователь загружается из БД (убран demo-user)
+- [x] Реальный пользователь загружается из БД
 - [x] ProfilePage — навигационные кнопки
-- [x] EditProfilePage — редактирование никнейма, BIO, приватность, аватар
-- [x] AppSettingsPage — UI готов (темы, язык — заглушки)
-- [x] .cursorrules — дизайн-система для Cursor
-- [x] TODO.md — трекер задач
+- [x] EditProfilePage — аватар, никнейм, BIO, приватность
+- [x] AppSettingsPage — UI готов (темы/язык — заглушки)
+- [x] .cursorrules — дизайн-система Inter + новый стиль
+- [x] БД — новые entity: Skin, Case, CaseItem, UserInventory, CaseOpen, Transaction, Raffle, RaffleEntry, Season, SeasonScore
+- [x] User entity — добавлены поля tickets, faction
+- [x] HomePage — полный редизайн (лента дропов, задания, розыгрыши, маркет, анонсы)
+- [x] BottomNav — новые вкладки: Home, Cases, Arena, Leaderboard, Profile (lucide-react иконки)
+- [x] ArenaPage, LeaderboardPage — заглушки
+- [x] Шрифт Inter подключён
 
 ---
 
 ## 🔴 Высокий приоритет
 
-### БД — обновить схему под новую концепцию
-- [ ] Добавить поле tickets (Int) в таблицу users
-- [ ] Добавить поле faction (Enum) в таблицу users
-- [ ] Создать таблицу Case (id, name, imageUrl, price, isActive)
-- [ ] Создать таблицу CaseItem (caseId, skinId, dropWeight)
-- [ ] Создать таблицу Skin (id, name, weapon, wear, rarity, price, imageUrl, float, lisSkinId)
-- [ ] Создать таблицу UserInventory (userId, skinId, status: held/sold/traded, soldForRc)
-- [ ] Создать таблицу CaseOpen (userId, caseId, skinId, ticketsEarned, openedAt)
-- [ ] Создать таблицу Transaction (userId, type: deposit/spend/sell, amount, currency: rc/tickets)
-- [ ] Создать таблицу Raffle (id, type: daily/weekly, prize, ticketCost, endsAt, winnersCount)
-- [ ] Создать таблицу RaffleEntry (raffleId, userId, ticketsSpent)
-- [ ] Создать таблицу Season (id, startAt, endAt, isActive)
-- [ ] Создать таблицу SeasonScore (seasonId, userId, totalDropValue)
-- [ ] Создать таблицу Challenge (id, challengerId, opponentId, ticketStake, status, endsAt)
-- [ ] Создать таблицу Faction (id, name, color)
-- [ ] Создать таблицу FactionScore (factionId, weekStart, totalDropValue)
-
-### Бэкенд — новые модули
+### Бэкенд — критичные модули
 - [ ] Users модуль — PATCH /api/users/me (сохранение никнейма, BIO, tradeUrl в БД)
-- [ ] Cases модуль — GET /api/cases, POST /api/cases/:id/open (алгоритм дропа, начисление тикетов)
-- [ ] Inventory модуль — GET /api/inventory, POST /api/inventory/:id/sell (70% RC), POST /api/inventory/:id/trade
-- [ ] Payments модуль — POST /api/payments/invoice, webhook successful_payment → начислить RC
-- [ ] Raffles модуль — GET /api/raffles, POST /api/raffles/:id/enter, крон для определения победителей
-- [ ] Leaderboard модуль — GET /api/leaderboard/all-time, GET /api/leaderboard/season
-- [ ] Challenges модуль — POST /api/challenges, GET /api/challenges/:id
-- [ ] Factions модуль — GET /api/factions, POST /api/factions/join
+- [ ] Payments модуль — POST /api/payments/invoice (createInvoiceLink через Telegram)
+- [ ] Bot (index.js) — при successful_payment записывать транзакцию и начислять RC в БД
+- [ ] Cases модуль — GET /api/cases (список кейсов)
+- [ ] Cases модуль — POST /api/cases/:id/open (алгоритм дропа, начисление тикетов)
+- [ ] Inventory модуль — GET /api/inventory (скины пользователя)
+- [ ] Inventory модуль — POST /api/inventory/:id/sell (продажа за 70% RC)
+- [ ] Inventory модуль — POST /api/inventory/:id/trade (отправка трейда)
 
-### Фронтенд — новые страницы
-- [ ] HomePage — полный редизайн (лента дропов, RC+тикеты, задания, розыгрыши, анонсы)
-- [ ] CasesPage — каталог кейсов по ценам, рулетка открытия, анимация дропа
-- [ ] ArenaPage — три режима: Upgrade, Battle, Contracts
-- [ ] LeaderboardPage — постоянный + сезонный рейтинг, челленджи, фракции
-- [ ] ProfilePage — обновить баланс (RC + тикеты), добавить инвентарь скинов
+### Фронтенд — страница Cases
+- [ ] CasesPage — каталог кейсов по ценовым категориям
+- [ ] Анимация рулетки при открытии кейса
+- [ ] Экран результата дропа (показать выпавший скин + начисленные тикеты)
+- [ ] Списание RC при открытии кейса
 
-### Навигация
-- [ ] Переименовать вкладки: Home, Cases, Arena, Leaderboard, Profile
-- [ ] Обновить иконки навигации под новые страницы
-- [ ] Убрать старую MarketPage из навигации (переехала в Cases или отдельно)
+### Фронтенд — Profile
+- [ ] Блок инвентаря на ProfilePage (выбитые скины)
+- [ ] Кнопки "Продать за RC" и "Отправить в Steam" для каждого скина
+- [ ] Обновить баланс (RC + тикеты) из БД после авторизации
+
+### Пополнение баланса
+- [ ] DepositPage — реальная форма пополнения через Telegram Stars
+- [ ] После оплаты — обновить баланс RC в store из БД
 
 ---
 
 ## 🟡 Средний приоритет
 
-### Кейсы
-- [ ] Анимация рулетки при открытии кейса
-- [ ] Бонус тикеты за Classified+ (+5) и Covert (+20) дропы
-- [ ] Таблица цен кейсов и тикетов: до $1→1т, $1-$5→3т, $5+→10т
+### Лента дропов (вернуться после кейсов)
+- [ ] Подключить реальные данные последних дропов через API
+- [ ] WebSocket или polling для живого обновления
+- [ ] Скролл пальцем назад по ленте
+- [ ] Очередь дропов — если много открытий, стакаются и появляются постепенно
 
 ### Arena
-- [ ] Upgrade — алгоритм шанса улучшения (чем выше редкость тем ниже шанс)
-- [ ] Battle — матчмейкинг, комната ожидания, таймер
-- [ ] Contracts — выбор N скинов одной редкости → дроп следующей редкости
+- [ ] ArenaPage — сетка режимов (Upgrade, Battle, Contracts) как в референсе
+- [ ] Upgrade — алгоритм шанса улучшения скина
+- [ ] Battle — pvp, матчмейкинг, комната ожидания
+- [ ] Contracts — N скинов одной редкости → 1 скин следующей редкости
 
 ### Leaderboard
-- [ ] Сезонный сброс — крон 1-го числа каждого месяца
+- [ ] LeaderboardPage — топ игроков по сумме дропов
+- [ ] Постоянный рейтинг (всё время) + Сезонный (текущий месяц)
+- [ ] Твоё место закреплено внизу + подсказка сколько до следующего
 - [ ] Призы топ-3 сезона — автоматическая выдача
-- [ ] Челленджи — логика 24 часа, определение победителя
-- [ ] Фракции — еженедельный бонус RC победившей фракции
+- [ ] Челленджи между игроками (ставка тикетами, 24 часа)
+- [ ] Фракции (3-4 команды, еженедельный бонус RC)
 
-### Профиль
-- [ ] Инвентарь — продажа скина за 70% RC
-- [ ] Инвентарь — отправка трейда в Steam по trade URL
-- [ ] Сохранение никнейма/BIO/tradeUrl в БД (сейчас только локальный store)
+### Розыгрыши
+- [ ] Подключить реальные данные розыгрышей из БД
+- [ ] POST /api/raffles/:id/enter — участие за тикеты
+- [ ] Крон для определения победителей (дейли/недельный)
+- [ ] Уведомление победителям через Telegram бот
+
+### Задания
+- [ ] Реальная проверка выполнения заданий (Steam подключён, Faceit подключён и т.д.)
+- [ ] Начисление RC после выполнения задания
+- [ ] Скрывать блок заданий когда все выполнены
 
 ---
 
 ## ⚪ Низкий приоритет (после запуска)
 
-- [ ] Светлая тема — прописать CSS переменные на всех компонентах
-- [ ] Смена языка RU/EN — подключить react-i18next
+- [ ] Светлая тема — CSS переменные на всех компонентах
+- [ ] Смена языка RU/EN — react-i18next
 - [ ] Steam авторизация (OpenID)
 - [ ] Faceit авторизация
 - [ ] История транзакций на странице профиля
 - [ ] Daily check-in → бэкенд (стрик, запись в БД)
-- [ ] Push уведомления через Telegram (трейд отправлен, выиграл розыгрыш)
+- [ ] Push уведомления (трейд отправлен, выиграл розыгрыш, обогнал в рейтинге)
 - [ ] Админ-панель: управление кейсами, скинами, розыгрышами
 - [ ] LisSkins API — реальные скины вместо моков
+- [ ] Анонсы из БД (сейчас моковые)
 
 ---
 
 ## 📝 Концепция (зафиксировано)
 
 ### Валюты
-- **RC (Rush Coins)** — основная валюта. Пополняется через Telegram Stars или таппером.
+- **RC (Rush Coins)** — основная валюта. Пополняется через Telegram Stars.
   Вывести нельзя — только внутри приложения.
 - **Тикеты** — зарабатываются при открытии кейсов. Тратятся на розыгрыши и челленджи.
 
@@ -128,23 +129,23 @@
 
 ### Фракции
 - 3–4 команды, игрок выбирает при регистрации
-- Еженедельно фракция с наибольшей суммой дропов получает бонус RC всем участникам
+- Еженедельно фракция с наибольшей суммой дропов получает бонус RC
 
 ### Челленджи
 - Бросаешь вызов игроку рядом по рейтингу
 - Оба ставят тикеты, 24 часа — кто выбьет скинов на большую сумму побеждает
-- Победитель забирает тикеты соперника
 
 ### Страницы
-1. 🏠 Home — лента дропов, RC+тикеты, задания, розыгрыши, анонсы
+1. 🏠 Home — лента дропов, RC+тикеты, задания, розыгрыши, маркет, анонсы
 2. 📦 Cases — каталог кейсов, рулетка, дропы
 3. ⚔️ Arena — Upgrade, Battle, Contracts
 4. 🏆 Leaderboard — рейтинг, сезон, челленджи, фракции
 5. 👤 Profile — баланс, инвентарь, настройки
 
 ### Технический стек
-- Frontend: React + TypeScript + Vite + Tailwind → Vercel
+- Frontend: React + TypeScript + Vite + Tailwind + Inter → Vercel
 - Backend: NestJS + TypeORM + PostgreSQL → Railway
 - Bot: Telegraf (index.js)
-- БД: PostgreSQL на Railway (synchronize:true в dev → миграции перед продом)
+- Icons: lucide-react
+- БД: PostgreSQL на Railway
 - LisSkins API — подключать когда будем делать трейды
