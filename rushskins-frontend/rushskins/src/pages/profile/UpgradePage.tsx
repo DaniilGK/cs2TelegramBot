@@ -9,7 +9,7 @@ export function UpgradePage() {
         ← Назад
       </button>
       <div className="flex flex-1 items-center justify-center">
-        <p className="font-display text-3xl font-semibold text-text-primary tracking-wide">Скоро</p>
+        <p className="font-sans text-3xl font-semibold text-text-primary tracking-wide">Скоро</p>
       </div>
     </div>
   )

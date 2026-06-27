@@ -8,6 +8,7 @@ export interface User {
   bio?: string
   balance: number      // в центах
   coins: number
+  tickets: number
   energy: number
   maxEnergy: number
   level: number
@@ -38,9 +39,9 @@ interface AppState {
   user: User
   marketItems: SkinItem[]
   cartItems: string[]
-  activeTab: 'home' | 'market' | 'cases' | 'friends' | 'profile'
+  activeTab: 'home' | 'market' | 'cases' | 'arena' | 'leaderboard' | 'profile'
 
-  setUser: (user: User) => void                          // ← новый action
+  setUser: (user: Partial<User> & { id: string }) => void                          // ← новый action
   updateUser: (user: Partial<User>) => void
   tapCoin: () => void
   setActiveTab: (tab: AppState['activeTab']) => void
@@ -57,6 +58,7 @@ export const useAppStore = create<AppState>((set, get) => ({
     username: '',
     balance:  0,
     coins:    0,
+    tickets:  0,
     energy:   500,
     maxEnergy: 500,
     level:    1,
@@ -71,7 +73,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   activeTab:   'home',
 
   // ─── Загружаем реального пользователя из бэкенда ────────────────────────
-  setUser: (user) => set(state => ({ user: { ...state.user, ...user } })),
+  setUser: (user) => set(state => ({ user: { ...state.user, ...user, tickets: user.tickets ?? 0 } })),
   updateUser: (user) => set(state => ({ user: { ...state.user, ...user } })),
 
   tapCoin: () => set(state => {

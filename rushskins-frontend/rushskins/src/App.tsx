@@ -6,6 +6,9 @@ import { BottomNav } from '@/components/layout/BottomNav'
 import { HomePage } from '@/pages/HomePage'
 import { MarketPage } from '@/pages/MarketPage'
 import { ProfilePage } from '@/pages/ProfilePage'
+import { ArenaPage } from '@/pages/ArenaPage'
+import { LeaderboardPage } from '@/pages/LeaderboardPage'
+import { DepositPage } from '@/pages/DepositPage'
 import { EditProfilePage } from '@/pages/profile/EditProfilePage'
 import { AppSettingsPage } from '@/pages/profile/AppSettingsPage'
 import { UpgradePage } from '@/pages/profile/UpgradePage'
@@ -15,21 +18,9 @@ function CasesPage() {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-3 px-4 animate-fade-in">
       <span className="text-5xl">📦</span>
-      <h1 className="font-display text-2xl font-semibold text-text-primary tracking-wide">Cases</h1>
-      <p className="text-text-secondary font-body text-sm text-center">
+      <h1 className="font-sans text-2xl font-semibold text-text-primary tracking-wide">Cases</h1>
+      <p className="text-text-secondary font-sans text-sm text-center">
         Case system coming in Sprint 3.<br/>Algorithm generates custom cases from available inventory.
-      </p>
-    </div>
-  )
-}
-
-function FriendsPage() {
-  return (
-    <div className="flex flex-col items-center justify-center h-full gap-3 px-4 animate-fade-in">
-      <span className="text-5xl">👥</span>
-      <h1 className="font-display text-2xl font-semibold text-text-primary tracking-wide">Friends</h1>
-      <p className="text-text-secondary font-body text-sm text-center">
-        Referral & friends system coming in Sprint 5.<br/>Invite friends, track their activity, earn rewards.
       </p>
     </div>
   )
@@ -48,7 +39,8 @@ export default function App() {
     const topRoute = location.pathname.split('/')[1]
     if (topRoute === 'market') setActiveTab('market')
     else if (topRoute === 'cases') setActiveTab('cases')
-    else if (topRoute === 'friends') setActiveTab('friends')
+    else if (topRoute === 'arena') setActiveTab('arena')
+    else if (topRoute === 'leaderboard') setActiveTab('leaderboard')
     else if (topRoute === 'profile') setActiveTab('profile')
     else setActiveTab('home')
   }, [location.pathname, setActiveTab])
@@ -62,7 +54,9 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/market" element={<MarketPage />} />
             <Route path="/cases" element={<CasesPage />} />
-            <Route path="/friends" element={<FriendsPage />} />
+            <Route path="/arena" element={<ArenaPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/deposit" element={<DepositPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/profile/edit-profile" element={<EditProfilePage />} />
             <Route path="/profile/app-settings" element={<AppSettingsPage />} />

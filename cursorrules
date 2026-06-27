@@ -5,120 +5,200 @@
 - Backend: NestJS + TypeORM + PostgreSQL (rushskins-backend)
 - Bot: Telegraf (index.js, корень)
 - State: Zustand (useAppStore)
+- Icons: lucide-react (ТОЛЬКО lucide-react, никаких эмодзи как иконки)
 - Deploy: Frontend → Vercel, Backend → Railway
 
 ## Главные правила
-
 1. НИКОГДА не меняй файлы авторизации: useTelegram.ts, auth.service.ts, jwt.strategy.ts
 2. НИКОГДА не трогай .env файлы
-3. ВСЕГДА запускай npm run build после изменений и убеждайся что сборка без ошибок
-4. НИКОГДА не добавляй новые npm пакеты без явного указания в задаче
-5. ВСЕГДА следуй существующему дизайн-системе (см. ниже)
-6. Все новые страницы создавай в src/pages/, компоненты в src/components/
-7. Роуты добавляй в App.tsx
+3. ВСЕГДА запускай npm run build после изменений
+4. НИКОГДА не используй эмодзи как иконки интерфейса — только lucide-react
+5. НИКОГДА не используй inline styles — только Tailwind классы
+6. НИКОГДА не добавляй новые npm пакеты без явного указания
+7. ВСЕГДА следуй дизайн-системе ниже
+8. Все новые страницы в src/pages/, компоненты в src/components/
+9. Роуты добавлять в App.tsx
 
 ---
 
-## DESIGN SYSTEM — строго следуй этому
+## ШРИФТ
+Единственный шрифт приложения — Inter (Google Fonts).
+Подключён в index.html:
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-### Цвета — только из tailwind.config.ts, никаких hex напрямую
-Фоны:
-- bg-bg-base      → основной фон страницы
-- bg-bg-surface   → навбар, шапка
-- bg-bg-raised    → карточки, блоки
-- bg-bg-overlay   → инпуты, вложенные элементы
+В Tailwind: fontFamily: { sans: ['Inter', 'sans-serif'] }
+Использование: font-sans везде. Не использовать font-display, font-body, font-mono.
 
-Акценты:
-- text-accent-orange / bg-accent-orange → главный акцент #FF5C00
-- bg-accent-dim                         → hover/active состояние
-- text-gold / bg-gold                   → золотой акцент
-
-Текст:
-- text-text-primary   → основной текст
-- text-text-secondary → второстепенный
-- text-text-muted     → подписи, плейсхолдеры
-
-Бордеры:
-- border-border        → стандартный
-- border-border-bright → выделенный
-
-### Типографика
-- font-display → "Barlow Condensed" — заголовки, кнопки, цифры, имена
-- font-body    → "DM Sans"          — описания, лейблы, мелкий текст
-- font-mono    → "JetBrains Mono"   — цены, коды, числа
-
-### Радиусы
-- rounded-xl  → кнопки, инпуты
-- rounded-2xl → карточки, блоки
-- rounded-3xl → крупные контейнеры
-- rounded-full → теги, аватары, пилюли
+Веса:
+- font-normal (400) — обычный текст
+- font-medium (500) — лейблы, подписи
+- font-semibold (600) — названия, кнопки
+- font-bold (700) — заголовки секций
+- font-extrabold (800) — заголовки страниц
+- font-black (900) — главные акценты, цены
 
 ---
 
-## Паттерны — копируй точно
+## ЦВЕТА
+
+### Фоны (от тёмного к светлому)
+- bg-[#0D0D0D] — основной фон страницы
+- bg-[#141414] — карточки, блоки
+- bg-[#1A1A1A] — вложенные элементы, инпуты
+- bg-[#222222] — hover состояния, активные элементы
+
+### Акцентные цвета
+- Оранжевый:  #FF5C00 — основной акцент (RC валюта, кнопки)
+- Зелёный:    #00E676 — успех, выигрыш, задания
+- Фиолетовый: #7C3AED — тикеты, редкие предметы
+- Синий:      #3B82F6 — инфо, Upgrade
+- Красный:    #EF4444 — Battle, опасность
+- Золотой:    #F59E0B — Covert скины, топ рейтинг
+- Розовый:    #EC4899 — Classified скины
+
+### Текст
+- text-white          — основной текст
+- text-[#A0A0A0]      — второстепенный текст
+- text-[#555555]      — мuted, плейсхолдеры
+
+### Редкости скинов
+- Consumer:   #B0C3D9
+- Industrial: #5E98D9
+- Mil-Spec:   #4B69FF
+- Restricted: #8847FF
+- Classified: #D32CE6
+- Covert:     #EB4B4B
+- Contraband: #E4AE39
+
+---
+
+## ИКОНКИ — только lucide-react
+
+Импорт: import { Home, Package, Sword, Trophy, User, ... } from 'lucide-react'
+
+Размеры:
+- Навбар: size={22}
+- В строках/карточках: size={18}
+- В заголовках страниц: size={24}
+- В цветных плашках заданий: size={20}
+
+Цветные плашки для иконок заданий (квадрат с rounded-xl):
+<div className="w-11 h-11 rounded-xl bg-[#FF5C00] flex items-center justify-center flex-shrink-0">
+  <UserPlus size={20} className="text-white" />
+</div>
+
+Каждое задание/режим имеет свой цвет плашки:
+- Пригласить друга: bg-[#FF5C00]
+- Steam: bg-[#1A9FFF]
+- Faceit: bg-[#FF5500]
+- Комьюнити: bg-[#7C3AED]
+- Cases: bg-[#00E676] с text-[#0D0D0D]
+- Battle: bg-[#EF4444]
+- Contracts: bg-[#7C3AED]
+- Upgrade: bg-[#3B82F6]
+
+---
+
+## ПАТТЕРНЫ — копируй точно
 
 ### Обёртка страницы
 ```tsx
-<div className="flex flex-col px-4 pt-4 pb-4 gap-4 overflow-y-auto animate-fade-in">
+<div className="flex flex-col bg-[#0D0D0D] min-h-screen pb-20">
+```
+
+### Заголовок страницы (вверху с иконкой)
+```tsx
+<div className="flex items-center gap-2 px-4 pt-5 pb-4">
+  <Package size={24} className="text-[#00E676]" />
+  <h1 className="text-xl font-extrabold text-white tracking-wide uppercase">CASES</h1>
+</div>
 ```
 
 ### Карточка / блок
 ```tsx
-<div className="bg-bg-raised border border-border rounded-2xl p-4">
+<div className="mx-4 bg-[#141414] rounded-2xl p-4">
 ```
 
-### Кнопка primary
+### Кнопка primary (оранжевая)
 ```tsx
-<button className="px-4 py-2 bg-accent-orange text-white rounded-xl font-display text-sm font-semibold active:bg-accent-dim active:scale-95 transition-all">
+<button className="px-5 py-3 bg-[#FF5C00] text-white rounded-xl font-semibold text-sm active:scale-95 transition-all">
+  Текст
+</button>
+```
+
+### Кнопка primary (зелёная — для позитивных действий)
+```tsx
+<button className="px-5 py-3 bg-[#00E676] text-[#0D0D0D] rounded-xl font-bold text-sm active:scale-95 transition-all">
+  Top Up
+</button>
 ```
 
 ### Кнопка secondary
 ```tsx
-<button className="px-4 py-2 bg-bg-overlay border border-border text-text-secondary rounded-xl font-display text-sm font-semibold active:scale-95 transition-all">
+<button className="px-5 py-3 bg-[#1A1A1A] border border-[#2A2A2A] text-[#A0A0A0] rounded-xl font-semibold text-sm active:scale-95 transition-all">
+  Текст
+</button>
 ```
 
 ### Инпут
 ```tsx
-<input className="w-full bg-bg-overlay border border-border rounded-xl px-3 py-2 text-sm font-body text-text-primary placeholder-text-muted outline-none focus:border-accent-orange/50 transition-colors" />
+<input className="w-full bg-[#1A1A1A] border border-[#2A2A2A] rounded-xl px-4 py-3 text-sm text-white placeholder-[#555555] outline-none focus:border-[#FF5C00]/50 transition-colors font-sans" />
 ```
 
-### Кнопка "← Назад" (обязательна на всех подстраницах)
+### Строка задания (иконка-плашка + текст + награда)
 ```tsx
-<button onClick={() => navigate(-1)} className="flex items-center gap-2 text-text-secondary font-body text-sm mb-4 active:text-text-primary transition-colors">
-  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M15 18l-6-6 6-6"/>
-  </svg>
+<button className="w-full flex items-center gap-3 bg-[#141414] rounded-2xl p-4 active:scale-[0.98] transition-all">
+  <div className="w-11 h-11 rounded-xl bg-[#FF5C00] flex items-center justify-center flex-shrink-0">
+    <UserPlus size={20} className="text-white" />
+  </div>
+  <div className="flex-1 text-left">
+    <p className="text-sm font-semibold text-white">Пригласи друга с CS2</p>
+    <p className="text-xs text-[#00E676] font-medium mt-0.5">+50 RC</p>
+  </div>
+  <ChevronRight size={16} className="text-[#555555]" />
+</button>
+```
+
+### Лейбл секции
+```tsx
+<p className="px-4 text-xs font-bold text-[#555555] uppercase tracking-widest mb-2">ЗАДАНИЯ</p>
+```
+
+### Бейдж валюты (в шапке)
+```tsx
+{/* RC — оранжевый */}
+<button className="flex items-center gap-1.5 bg-[#1A1A1A] border border-[#FF5C00]/30 rounded-xl px-3 py-1.5 active:scale-95 transition-all">
+  <Diamond size={14} className="text-[#FF5C00]" />
+  <span className="text-sm font-bold text-white">{balance}</span>
+  <span className="text-xs text-[#A0A0A0]">RC</span>
+</button>
+
+{/* Тикеты — фиолетовый */}
+<div className="flex items-center gap-1.5 bg-[#1A1A1A] border border-[#7C3AED]/30 rounded-xl px-3 py-1.5">
+  <Ticket size={14} className="text-[#7C3AED]" />
+  <span className="text-sm font-bold text-white">{tickets}</span>
+</div>
+```
+
+### Карточка игрового режима (сетка 2x2)
+```tsx
+<button className="relative flex flex-col items-center justify-end bg-[#141414] border border-[#00E676]/20 rounded-2xl p-4 aspect-square active:scale-95 transition-all overflow-hidden">
+  {/* Градиентный фон */}
+  <div className="absolute inset-0 bg-gradient-to-br from-[#00E676]/10 to-transparent" />
+  {/* Иконка в круге */}
+  <div className="w-16 h-16 rounded-full border-2 border-[#00E676]/40 flex items-center justify-center mb-3">
+    <Package size={28} className="text-[#00E676]" />
+  </div>
+  <p className="text-sm font-black text-white uppercase tracking-wide relative z-10">CASES</p>
+</button>
+```
+
+### Кнопка Назад
+```tsx
+<button onClick={() => navigate(-1)} className="flex items-center gap-1.5 text-[#A0A0A0] text-sm font-medium px-4 pt-4 pb-2 active:text-white transition-colors">
+  <ChevronLeft size={18} />
   Назад
 </button>
-```
-
-### Строка-навигация (иконка + название + стрелка вправо)
-```tsx
-<button className="w-full flex items-center gap-3 px-4 py-3 bg-bg-raised border border-border rounded-2xl active:scale-95 transition-all">
-  <span className="text-lg">🔗</span>
-  <span className="font-display text-base font-semibold text-text-primary tracking-wide flex-1 text-left">Название</span>
-  <svg className="w-4 h-4 text-text-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M9 18l6-6-6-6"/>
-  </svg>
-</button>
-```
-
-### Лейбл секции (заголовок над группой элементов)
-```tsx
-<p className="text-xs text-text-muted font-body uppercase tracking-wider">НАЗВАНИЕ</p>
-```
-
-### Toggle (одна строка: текст слева, переключатель справа)
-```tsx
-<div className="flex items-center justify-between py-3 border-b border-border">
-  <span className="font-body text-sm text-text-primary">Название</span>
-  <button
-    onClick={() => setActive(v => !v)}
-    className={`w-12 h-6 rounded-full transition-colors relative ${active ? 'bg-accent-orange' : 'bg-bg-overlay border border-border'}`}
-  >
-    <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform ${active ? 'translate-x-7' : 'translate-x-1'}`} />
-  </button>
-</div>
 ```
 
 ### Toast уведомление
@@ -126,40 +206,51 @@
 const [toast, setToast] = useState('')
 const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''), 2000) }
 
-// В JSX:
 {toast && (
-  <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-bg-raised border border-border rounded-xl px-4 py-2 text-sm font-body text-text-primary animate-fade-in shadow-lg">
+  <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 bg-[#1A1A1A] border border-[#2A2A2A] rounded-2xl px-5 py-3 text-sm font-medium text-white shadow-2xl whitespace-nowrap">
     {toast}
   </div>
 )}
 ```
 
-### Лейбл редкости скина
+### Toggle (одна строка)
 ```tsx
-const RARITY_COLORS: Record<string, string> = {
-  consumer:   'text-rarity-consumer',
-  industrial: 'text-rarity-industrial',
-  milspec:    'text-rarity-milspec',
-  restricted: 'text-rarity-restricted',
-  classified: 'text-rarity-classified',
-  covert:     'text-rarity-covert',
-  contraband: 'text-rarity-contraband',
-}
+<div className="flex items-center justify-between py-3.5 border-b border-[#1A1A1A]">
+  <span className="text-sm font-medium text-white">Название</span>
+  <button
+    onClick={() => setActive(v => !v)}
+    className={`w-12 h-6 rounded-full transition-all relative ${active ? 'bg-[#FF5C00]' : 'bg-[#222222]'}`}
+  >
+    <span className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-transform shadow-sm ${active ? 'translate-x-7' : 'translate-x-1'}`} />
+  </button>
+</div>
 ```
+
+### BottomNav
+```tsx
+{/* Активная вкладка: цветная иконка + цветной текст */}
+{/* Неактивная: text-[#555555] */}
+<div className="fixed bottom-0 left-0 right-0 bg-[#0D0D0D] border-t border-[#1A1A1A] flex">
+  {tabs.map(tab => (
+    <button key={tab.path} onClick={() => navigate(tab.path)}
+      className="flex-1 flex flex-col items-center py-3 gap-1">
+      <tab.icon size={22} className={isActive(tab.path) ? 'text-[#FF5C00]' : 'text-[#555555]'} />
+      <span className={`text-[10px] font-medium ${isActive(tab.path) ? 'text-[#FF5C00]' : 'text-[#555555]'}`}>
+        {tab.label}
+      </span>
+    </button>
+  ))}
+</div>
+```
+
+---
 
 ## API
 - Backend URL: https://cs2telegrambot-production.up.railway.app
 - Frontend URL: https://cs2-telegram-bot.vercel.app
-- Все API запросы: fetch с заголовком Authorization: Bearer ${localStorage.getItem('rushskins_token')}
-
-## Как делать API запросы из фронтенда
+- Все запросы с токеном:
 ```tsx
 const res = await fetch(`${import.meta.env.VITE_API_BASE}/api/endpoint`, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${localStorage.getItem('rushskins_token')}`,
-  },
-  body: JSON.stringify(data),
+  headers: { 'Authorization': `Bearer ${localStorage.getItem('rushskins_token')}` }
 })
 ```

@@ -63,7 +63,7 @@ export function SkinCard({ item, onBuy }: SkinCardProps) {
         {/* Float badge */}
         {item.float !== undefined && (
           <div className="absolute bottom-1.5 right-1.5 bg-bg-surface/80 backdrop-blur-sm rounded-md px-1.5 py-0.5">
-            <span className="font-mono text-[10px] text-text-secondary">
+            <span className="font-sans text-[10px] text-text-secondary">
               {item.float.toFixed(4)}
             </span>
           </div>
@@ -77,16 +77,16 @@ export function SkinCard({ item, onBuy }: SkinCardProps) {
 
       {/* Info */}
       <div className="p-2.5 flex flex-col gap-1 flex-1">
-        <p className="text-[10px] font-body text-text-muted uppercase tracking-wider">
+        <p className="text-[10px] font-sans text-text-muted uppercase tracking-wider">
           {item.weapon}
         </p>
-        <p className="font-display text-sm font-semibold text-text-primary tracking-wide leading-tight">
+        <p className="font-sans text-sm font-semibold text-text-primary tracking-wide leading-tight">
           {item.name}
         </p>
-        <p className="text-[10px] font-body" style={{ color: rarityColor }}>
+        <p className="text-[10px] font-sans" style={{ color: rarityColor }}>
           {RARITY_LABELS[item.rarity]}
         </p>
-        <p className="text-[10px] text-text-muted font-body">{item.wear}</p>
+        <p className="text-[10px] text-text-muted font-sans">{item.wear}</p>
       </div>
 
       {/* Buy button */}
@@ -94,7 +94,7 @@ export function SkinCard({ item, onBuy }: SkinCardProps) {
         <button
           onClick={handleBuy}
           className={clsx(
-            'w-full py-2 rounded-xl font-display text-sm font-semibold tracking-wide transition-all active:scale-95',
+            'w-full py-2 rounded-xl font-sans text-sm font-semibold tracking-wide transition-all active:scale-95',
             inCart
               ? 'bg-bg-overlay border border-border text-text-secondary'
               : 'bg-accent-orange text-white active:bg-accent-dim'

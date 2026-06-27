@@ -39,10 +39,10 @@ export function MarketPage() {
       {/* Header + search */}
       <div className="px-4 pt-4 pb-2 flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <h1 className="font-display text-2xl font-semibold text-text-primary tracking-wide">Market</h1>
+          <h1 className="font-sans text-2xl font-semibold text-text-primary tracking-wide">Market</h1>
           {cartItems.length > 0 && (
             <div className="bg-accent-orange rounded-full w-7 h-7 flex items-center justify-center">
-              <span className="font-mono text-xs font-medium text-white">{cartItems.length}</span>
+              <span className="font-sans text-xs font-medium text-white">{cartItems.length}</span>
             </div>
           )}
         </div>
@@ -57,7 +57,7 @@ export function MarketPage() {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search skins..."
-            className="w-full bg-bg-raised border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm font-body text-text-primary placeholder-text-muted outline-none focus:border-accent-orange/50 transition-colors"
+            className="w-full bg-bg-raised border border-border rounded-xl pl-9 pr-4 py-2.5 text-sm font-sans text-text-primary placeholder-text-muted outline-none focus:border-accent-orange/50 transition-colors"
           />
         </div>
 
@@ -67,7 +67,7 @@ export function MarketPage() {
             <button
               key={r}
               onClick={() => setRarity(r)}
-              className={`shrink-0 px-3 py-1 rounded-full text-xs font-body font-medium border transition-all ${
+              className={`shrink-0 px-3 py-1 rounded-full text-xs font-sans font-medium border transition-all ${
                 rarity === r
                   ? 'bg-accent-orange/20 border-accent-orange/60 text-accent-orange'
                   : 'bg-bg-raised border-border text-text-secondary'
@@ -79,7 +79,7 @@ export function MarketPage() {
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value as typeof sortBy)}
-            className="shrink-0 bg-bg-raised border border-border rounded-full px-3 py-1 text-xs font-body text-text-secondary outline-none"
+            className="shrink-0 bg-bg-raised border border-border rounded-full px-3 py-1 text-xs font-sans text-text-secondary outline-none"
           >
             <option value="rarity">By rarity</option>
             <option value="price-desc">Price ↓</option>
@@ -106,7 +106,7 @@ export function MarketPage() {
         ) : sorted.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <span className="text-4xl opacity-40">🔍</span>
-            <p className="text-text-secondary font-body text-sm">No skins found</p>
+            <p className="text-text-secondary font-sans text-sm">No skins found</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
