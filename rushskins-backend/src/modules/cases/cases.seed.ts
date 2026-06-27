@@ -192,42 +192,48 @@ const CASES: CaseSeed[] = [
 ]
 
 export async function seedCases(dataSource: DataSource): Promise<void> {
-  const casesCount = await dataSource.getRepository(Case).count()
-  if (casesCount > 0) return
+  const caseRepo = dataSource.getRepository(Case)
+  const skinRepo = dataSource.getRepository(Skin)
+  const caseItemRepo = dataSource.getRepository(CaseItem)
 
-  await dataSource.transaction(async manager => {
-    for (const caseSeed of CASES) {
-      const createdCase = await manager.getRepository(Case).save({
-        name: caseSeed.name,
-        imageUrl: STEAM_IMAGE,
-        price: caseSeed.price,
-        isActive: true,
-      })
+  const count = await caseRepo.count()
+  if (count > 0) {
+    // eslint-disable-next-line no-console
+    console.log('Cases already seeded, skipping')
+    return
+  }
 
-      for (const [rarity, count] of caseSeed.contents) {
-        for (let index = 0; index < count; index += 1) {
-          const fullName = SKIN_POOLS[rarity][index % SKIN_POOLS[rarity].length]
-          const [weapon, name] = fullName.split(' | ')
-          const skin = await manager.getRepository(Skin).save({
-            name,
-            weapon,
-            wear: pickWear(index),
-            rarity,
-            price: RARITY_PRICE[rarity],
-            imageUrl: STEAM_IMAGE,
-            float: Number((0.01 + index * 0.007).toFixed(6)),
-            lisSkinId: null,
-          })
+  for (const caseSeed of CASES) {
+    const createdCase = await caseRepo.save({
+      name: caseSeed.name,
+      imageUrl: STEAM_IMAGE,
+      price: caseSeed.price,
+      isActive: true,
+    })
 
-          await manager.getRepository(CaseItem).save({
-            caseId: createdCase.id,
-            skinId: skin.id,
-            dropWeight: RARITY_WEIGHT[rarity],
-          })
-        }
+    for (const [rarity, count] of caseSeed.contents) {
+      for (let index = 0; index < count; index += 1) {
+        const fullName = SKIN_POOLS[rarity][index % SKIN_POOLS[rarity].length]
+        const [weapon, name] = fullName.split(' | ')
+        const skin = await skinRepo.save({
+          name,
+          weapon,
+          wear: pickWear(index),
+          rarity,
+          price: RARITY_PRICE[rarity],
+          imageUrl: STEAM_IMAGE,
+          float: Number((0.01 + index * 0.007).toFixed(6)),
+          lisSkinId: null,
+        })
+
+        await caseItemRepo.save({
+          caseId: createdCase.id,
+          skinId: skin.id,
+          dropWeight: RARITY_WEIGHT[rarity],
+        })
       }
     }
-  })
+  }
 }
 
 function pickWear(index: number): string {

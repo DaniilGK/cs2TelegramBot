@@ -20,9 +20,20 @@ async function bootstrap() {
   })
 
   await app.listen(port)
-  await seedCases(app.get(DataSource))
   // eslint-disable-next-line no-console
   console.log(`Backend listening on http://localhost:${port}`)
+
+  const dataSource = app.get(DataSource)
+
+  try {
+    await seedCases(dataSource)
+    // eslint-disable-next-line no-console
+    console.log('Seed completed successfully')
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e)
+    // eslint-disable-next-line no-console
+    console.error('Seed error (non-fatal):', message)
+  }
 }
 
 bootstrap()
