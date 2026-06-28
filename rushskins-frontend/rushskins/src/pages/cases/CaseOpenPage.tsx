@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, Diamond, Ticket } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
@@ -21,6 +21,7 @@ export function CaseOpenPage() {
   const [totalSpins, setTotalSpins] = useState(0)
   const [ticketsEarned, setTicketsEarned] = useState(0)
   const [toast, setToast] = useState<string | null>(null)
+  const currentOffsetRef = useRef(0)
   const caseItem = MOCK_CASES.find(item => item.id === id)
   const caseName = caseItem?.name ?? 'Кейс'
   const casePrice = caseItem?.price ?? 0
@@ -40,6 +41,10 @@ export function CaseOpenPage() {
     setOffset(rouletteHeight / 2 - CARD_HEIGHT / 2 - 10 * CARD_HEIGHT)
   }, [])
 
+  useEffect(() => {
+    currentOffsetRef.current = offset
+  }, [offset])
+
   const calcTickets = (skin: MockSkin) => {
     let t = casePrice < 100 ? 1 : casePrice < 500 ? 3 : 10
     if (skin.rarity === 'classified') t += 5
@@ -58,32 +63,24 @@ export function CaseOpenPage() {
     }
 
     const won = MOCK_SKINS[Math.floor(Math.random() * MOCK_SKINS.length)]
-    const items = buildRouletteItems(won)
+    const newItems = buildRouletteItems(won)
+    const nextOffset = currentOffsetRef.current - (WIN_INDEX * CARD_HEIGHT)
 
     setCurrentSpin(accumulated.length + 1)
     setIsSpinning(false)
-    setOffset(0)
-    setRouletteItems([])
+    setRouletteItems(prev => [...prev, ...newItems])
 
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        setRouletteItems(items)
-        setIsSpinning(true)
+    window.setTimeout(() => {
+      setIsSpinning(true)
+      setOffset(nextOffset)
+    }, 50)
 
-        window.setTimeout(() => {
-          const rouletteHeight = window.innerHeight - 250
-          const finalOffset = -(WIN_INDEX * CARD_HEIGHT) + rouletteHeight / 2 - CARD_HEIGHT / 2
-          setOffset(finalOffset)
-        }, 50)
-
-        window.setTimeout(() => {
-          setIsSpinning(false)
-          window.setTimeout(() => {
-            runSpinSequence(spinsLeft - 1, [...accumulated, won])
-          }, 800)
-        }, 4200)
-      })
-    })
+    window.setTimeout(() => {
+      setIsSpinning(false)
+      window.setTimeout(() => {
+        runSpinSequence(spinsLeft - 1, [...accumulated, won])
+      }, 800)
+    }, 5200)
   }
 
   const handleSpin = () => {
@@ -155,7 +152,7 @@ export function CaseOpenPage() {
           style={{
             transform: `translateY(${offset}px)`,
             transition: isSpinning
-              ? 'transform 4s cubic-bezier(0.05, 0.0, 0.1, 1.0)'
+              ? 'transform 5s cubic-bezier(0.15, 0.0, 0.0, 1.0)'
               : 'none',
           }}
         >
@@ -273,6 +270,10 @@ function ResultOverlay({
         <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold text-center">
           {wonSkins.length > 1 ? `Выбито ${wonSkins.length} скинов` : 'Выпало'}
         </p>
+        <div className="flex items-center gap-1.5 justify-center mt-2 mb-4">
+          <Ticket size={13} className="text-[#7C3AED]" />
+          <span className="text-xs font-bold text-[#7C3AED]">+{ticketsEarned} тикетов</span>
+        </div>
       </div>
 
       {wonSkins.length === 1 ? (
@@ -294,10 +295,6 @@ function ResultOverlay({
             {firstSkin.name} | {firstSkin.skin}
           </p>
           <p className="text-sm text-[#A0A0A0] mt-1">{firstSkin.wear}</p>
-          <div className="flex items-center gap-2 mt-4 bg-[#7C3AED]/10 border border-[#7C3AED]/30 rounded-xl px-4 py-2">
-            <Ticket size={16} className="text-[#7C3AED]" />
-            <span className="text-sm font-bold text-[#7C3AED]">+{ticketsEarned} тикетов</span>
-          </div>
         </div>
       ) : (
         <div className="flex-1 overflow-y-auto px-4">
@@ -351,10 +348,6 @@ function ResultOverlay({
           </button>
         </div>
 
-        <div className="flex items-center gap-2 justify-center py-3 border-t border-[#1A1A1A] mt-3">
-          <Ticket size={14} className="text-[#7C3AED]" />
-          <span className="text-sm font-bold text-[#7C3AED]">+{ticketsEarned} тикетов</span>
-        </div>
       </div>
     </div>
   )
