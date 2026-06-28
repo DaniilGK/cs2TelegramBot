@@ -1,7 +1,6 @@
 {
   "installCommand": "npm install",
   "buildCommand": "npm run build",
-  "outputDirectory": "rushskins-frontend/rushskins/dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
