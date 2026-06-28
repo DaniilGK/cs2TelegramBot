@@ -115,9 +115,11 @@ export function CaseOpenPage() {
         <div className="w-16" />
       </div>
 
-      {isSpinning && totalSpins > 1 && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-30 bg-[#1A1A1A] border border-[#FF5C00]/30 rounded-xl px-4 py-2">
-          <span className="text-sm font-bold text-white">{currentSpin} / {totalSpins}</span>
+      {phase === 'spinning' && totalSpins > 1 && (
+        <div className="absolute top-14 left-1/2 -translate-x-1/2 z-30">
+          <span className="text-base font-bold text-white opacity-70">
+            {currentSpin} / {totalSpins}
+          </span>
         </div>
       )}
 
@@ -233,7 +235,10 @@ export function CaseOpenPage() {
             showToast(wonSkins.length > 1 ? 'Скины в инвентаре' : 'Скин в инвентаре')
             setPhase('idle')
           }}
-          onSpinAgain={() => setPhase('idle')}
+          onSpinAgain={() => {
+            setPhase('idle')
+            setWonSkins([])
+          }}
         />
       )}
 
@@ -323,11 +328,14 @@ function ResultOverlay({
         </div>
       )}
 
-      <div className="flex-shrink-0 px-4 pb-6 pt-3 border-t border-[#1A1A1A]">
-        <div className="flex items-center gap-2 justify-center mb-4 bg-[#7C3AED]/10 border border-[#7C3AED]/30 rounded-xl px-4 py-2">
-          <Ticket size={16} className="text-[#7C3AED]" />
-          <span className="text-sm font-bold text-[#7C3AED]">+{ticketsEarned} тикетов</span>
-        </div>
+      <div className="flex-shrink-0 px-4 pb-6 pt-3">
+        <button
+          onClick={onSpinAgain}
+          className="w-full py-3 bg-[#1A1A1A] border border-[#2A2A2A] rounded-2xl font-semibold text-sm text-[#A0A0A0] active:scale-95 transition-all mb-3"
+        >
+          Крутить ещё
+        </button>
+
         <div className="flex gap-3">
           <button
             onClick={onSell}
@@ -343,12 +351,10 @@ function ResultOverlay({
           </button>
         </div>
 
-        <button
-          onClick={onSpinAgain}
-          className="w-full mt-3 text-sm text-[#555555] font-medium active:text-[#A0A0A0] transition-colors"
-        >
-          Крутить ещё
-        </button>
+        <div className="flex items-center gap-2 justify-center py-3 border-t border-[#1A1A1A] mt-3">
+          <Ticket size={14} className="text-[#7C3AED]" />
+          <span className="text-sm font-bold text-[#7C3AED]">+{ticketsEarned} тикетов</span>
+        </div>
       </div>
     </div>
   )
