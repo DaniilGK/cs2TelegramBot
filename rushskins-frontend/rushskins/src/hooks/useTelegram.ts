@@ -67,12 +67,6 @@ export function useTelegram(): UseTelegramReturn {
 
     // Авторизация: шлём initData на бэкенд
     const initData = tg.initData
-    // Временный debug — показываем статус на экране
-    const debugDiv = document.createElement('div')
-    debugDiv.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:red;color:white;font-size:12px;padding:4px;word-break:break-all'
-    debugDiv.textContent = `API:${API_BASE} | initData:${initData ? 'YES(' + initData.length + ')' : 'NO'}`
-    document.body.appendChild(debugDiv)
-
     if (initData && API_BASE) {
       console.log('initData:', initData)
       fetch(`${API_BASE}/api/auth/telegram`, {
@@ -108,8 +102,6 @@ export function useTelegram(): UseTelegramReturn {
         })
         .catch(error => {
           console.error('auth error:', error)
-          debugDiv.style.background = 'darkred'
-          debugDiv.textContent = 'AUTH ERROR: ' + error.message
         })
         .finally(() => setAuthReady(true))
     } else {
