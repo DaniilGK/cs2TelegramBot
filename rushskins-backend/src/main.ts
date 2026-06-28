@@ -15,6 +15,7 @@ async function bootstrap() {
       'http://localhost:4173',
       'http://localhost:3000',
       'https://daniilgk.github.io',
+      'https://cs2-telegram-bot.vercel.app',
     ],
     credentials: true,
   })
