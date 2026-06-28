@@ -30,6 +30,7 @@ interface BackendUser {
   firstName?: string
   balanceCents?: number
   coins?: number
+  tickets?: number
   energy?: number
   maxEnergy?: number
   level?: number
@@ -90,8 +91,9 @@ export function useTelegram(): UseTelegramReturn {
           setUser({
             id:        dbUser.id,
             username:  dbUser.username ?? dbUser.firstName ?? 'Player',
-            balance:   dbUser.balanceCents ?? 0,
+            balance:   dbUser.coins ?? dbUser.balanceCents ?? 0,
             coins:     dbUser.coins ?? 0,
+            tickets:   dbUser.tickets ?? 0,
             energy:    dbUser.energy ?? 0,
             maxEnergy: dbUser.maxEnergy ?? 0,
             level:     dbUser.level ?? 0,
