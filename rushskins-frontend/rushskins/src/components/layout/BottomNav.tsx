@@ -2,7 +2,6 @@ import { useNavigate } from 'react-router-dom'
 import { Home, Package, Sword, Trophy, User } from 'lucide-react'
 import { useAppStore } from '@/store/useAppStore'
 import { useTelegram } from '@/hooks/useTelegram'
-import clsx from 'clsx'
 
 const TABS = [
   {
@@ -43,41 +42,44 @@ export function BottomNav() {
   const navigate = useNavigate()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50"
-         style={{ paddingBottom: 'var(--safe-bottom)' }}>
-      <div className="bg-bg-surface border-t border-border/60 backdrop-blur-xl">
-        <div className="flex items-stretch">
-          {TABS.map(tab => {
-            const active = activeTab === tab.id
-            const Icon = tab.icon
-            return (
-              <button
-                key={tab.id}
-                className={clsx(
-                  'flex-1 flex flex-col items-center justify-center gap-0.5 py-2 transition-all duration-150 active:scale-90',
-                  active ? 'text-[#FF5C00]' : 'text-[#555555]'
-                )}
-                onClick={() => {
-                  haptic('light')
-                  setActiveTab(tab.id)
-                  navigate(tab.path)
-                }}
-              >
-                <Icon size={22} className={active ? 'text-[#FF5C00]' : 'text-[#555555]'} />
-                <span className={clsx(
-                  'font-sans text-[10px] font-medium leading-none',
-                  active ? 'text-[#FF5C00]' : 'text-[#555555]'
-                )}>
-                  {tab.label}
-                </span>
-                {active && (
-                  <span className="absolute bottom-0 w-8 h-0.5 rounded-full bg-[#FF5C00]" />
-                )}
-              </button>
-            )
-          })}
-        </div>
+    <div className="fixed bottom-4 left-4 right-4 z-50">
+      <div
+        className="flex items-center justify-around py-3 px-2 rounded-full"
+        style={{
+          background: 'rgba(20, 20, 20, 0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+        }}
+      >
+        {TABS.map(tab => {
+          const active = activeTab === tab.id
+          const Icon = tab.icon
+          return (
+            <button
+              key={tab.path}
+              onClick={() => {
+                haptic('light')
+                setActiveTab(tab.id)
+                navigate(tab.path)
+              }}
+              className="flex flex-col items-center gap-1 px-4 py-1 rounded-full transition-all active:scale-95"
+              style={{
+                background: active ? 'rgba(255,92,0,0.15)' : 'transparent',
+              }}
+            >
+              <Icon
+                size={22}
+                className={active ? 'text-[#FF5C00]' : 'text-[#555555]'}
+              />
+              <span className={`text-[10px] font-medium ${active ? 'text-[#FF5C00]' : 'text-[#555555]'}`}>
+                {tab.label}
+              </span>
+            </button>
+          )
+        })}
       </div>
-    </nav>
+    </div>
   )
 }

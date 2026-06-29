@@ -103,7 +103,7 @@
 
 ### Обёртка страницы
 ```tsx
-<div className="flex flex-col bg-[#0D0D0D] min-h-screen pb-20">
+<div className="flex flex-col bg-[#0D0D0D] min-h-screen pb-28">
 ```
 
 ### Заголовок страницы (вверху с иконкой)
@@ -230,16 +230,47 @@ const showToast = (msg: string) => { setToast(msg); setTimeout(() => setToast(''
 ```tsx
 {/* Активная вкладка: цветная иконка + цветной текст */}
 {/* Неактивная: text-[#555555] */}
-<div className="fixed bottom-0 left-0 right-0 bg-[#0D0D0D] border-t border-[#1A1A1A] flex">
+<div className="fixed bottom-4 left-4 right-4 z-50">
+  <div
+    className="flex items-center justify-around py-3 px-2 rounded-full"
+    style={{
+      background: 'rgba(20, 20, 20, 0.85)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      border: '1px solid rgba(255,255,255,0.08)',
+      boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+    }}
+  >
   {tabs.map(tab => (
     <button key={tab.path} onClick={() => navigate(tab.path)}
-      className="flex-1 flex flex-col items-center py-3 gap-1">
+      className="flex flex-col items-center gap-1 px-4 py-1 rounded-full transition-all active:scale-95"
+      style={{ background: isActive(tab.path) ? 'rgba(255,92,0,0.15)' : 'transparent' }}>
       <tab.icon size={22} className={isActive(tab.path) ? 'text-[#FF5C00]' : 'text-[#555555]'} />
       <span className={`text-[10px] font-medium ${isActive(tab.path) ? 'text-[#FF5C00]' : 'text-[#555555]'}`}>
         {tab.label}
       </span>
     </button>
   ))}
+  </div>
+</div>
+```
+
+### Плавающая кнопка (пилюля)
+Стиль с `backdropFilter: blur(...)` — новый стандарт для всех плавающих элементов поверх контента: CTA-кнопок, нижних панелей и навбара.
+```tsx
+<div className="fixed bottom-24 left-4 right-4 z-40">
+  <button
+    className="w-full py-4 rounded-full font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2"
+    style={{
+      background: 'rgba(255, 92, 0, 0.92)',
+      backdropFilter: 'blur(10px)',
+      WebkitBackdropFilter: 'blur(10px)',
+      boxShadow: '0 8px 24px rgba(255,92,0,0.4)',
+      color: 'white',
+    }}
+  >
+    Текст
+  </button>
 </div>
 ```
 

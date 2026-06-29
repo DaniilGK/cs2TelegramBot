@@ -10,7 +10,7 @@ export function CaseDetailPage() {
 
   if (!caseItem) {
     return (
-      <div className="flex flex-col bg-[#0D0D0D] min-h-screen pb-20">
+      <div className="flex flex-col bg-[#0D0D0D] min-h-screen pb-28">
         <BackButton onClick={() => navigate(-1)} />
         <div className="flex flex-1 items-center justify-center px-4">
           <p className="text-sm font-semibold text-[#A0A0A0]">Кейс не найден</p>
@@ -36,14 +36,24 @@ export function CaseDetailPage() {
         ))}
       </div>
 
-      <div className="fixed bottom-16 left-0 right-0 bg-[#0D0D0D] border-t border-[#1A1A1A] px-4 py-3 z-40">
+      <div className="fixed bottom-24 left-4 right-4 z-40">
         <button
           onClick={() => navigate(`/cases/${id}/open`)}
-          className="w-full py-3.5 bg-[#FF5C00] rounded-2xl font-bold text-white text-base active:scale-95 transition-all flex items-center justify-center gap-2"
+          className="w-full py-4 rounded-full font-bold text-base active:scale-95 transition-all flex items-center justify-center gap-2"
+          style={{
+            background: 'rgba(255, 92, 0, 0.92)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            boxShadow: '0 8px 24px rgba(255,92,0,0.4)',
+            color: 'white',
+          }}
         >
           <Package size={18} />
           Открыть кейс
-          <span className="flex items-center gap-1 bg-black/20 rounded-lg px-2 py-0.5 text-sm">
+          <span
+            className="flex items-center gap-1 rounded-lg px-2 py-0.5 text-sm font-semibold"
+            style={{ background: 'rgba(0,0,0,0.2)' }}
+          >
             <Diamond size={12} />
             {casePrice} RC
           </span>

@@ -8,7 +8,7 @@ export function CasesPage() {
   const { user } = useAppStore()
 
   return (
-    <div className="flex flex-col bg-[#0D0D0D] min-h-screen pb-20 animate-fade-in">
+    <div className="flex flex-col bg-[#0D0D0D] min-h-screen pb-28 animate-fade-in">
       <div className="flex items-center justify-between px-4 pt-5 pb-3">
         <div className="flex items-center gap-2">
           <Package size={22} className="text-[#FF5C00]" />

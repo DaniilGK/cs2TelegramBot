@@ -20,6 +20,7 @@ export function CaseOpenPage() {
   const [currentSpin, setCurrentSpin] = useState(0)
   const [totalSpins, setTotalSpins] = useState(0)
   const [ticketsEarned, setTicketsEarned] = useState(0)
+  const [showTickets, setShowTickets] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
   const currentOffsetRef = useRef(0)
   const caseItem = MOCK_CASES.find(item => item.id === id)
@@ -44,6 +45,13 @@ export function CaseOpenPage() {
   useEffect(() => {
     currentOffsetRef.current = offset
   }, [offset])
+
+  useEffect(() => {
+    if (phase === 'result') {
+      setShowTickets(true)
+      window.setTimeout(() => setShowTickets(false), 2500)
+    }
+  }, [phase])
 
   const calcTickets = (skin: MockSkin) => {
     let t = casePrice < 100 ? 1 : casePrice < 500 ? 3 : 10
@@ -184,13 +192,13 @@ export function CaseOpenPage() {
         </div>
       </div>
 
-      <div className="flex-shrink-0 bg-[#0D0D0D] border-t border-[#1A1A1A] px-4 pt-3 pb-6">
-        <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide">
+      <div className="fixed bottom-24 left-4 right-4 z-40">
+        <div className="flex gap-2 overflow-x-auto pb-3 scrollbar-hide justify-center">
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => (
             <button
               key={n}
               onClick={() => !isSpinning && phase !== 'spinning' && setQuantity(n)}
-              className={`flex-shrink-0 w-12 h-10 rounded-xl font-bold text-sm transition-all ${
+              className={`flex-shrink-0 w-11 h-10 rounded-xl font-bold text-sm transition-all ${
                 quantity === n
                   ? 'bg-[#FF5C00] text-white'
                   : 'bg-[#1A1A1A] border border-[#2A2A2A] text-[#A0A0A0]'
@@ -204,15 +212,20 @@ export function CaseOpenPage() {
         <button
           onClick={handleSpin}
           disabled={isSpinning || phase === 'spinning'}
-          className={`w-full py-4 rounded-2xl font-bold text-base text-white flex items-center justify-center gap-2 transition-all ${
-            isSpinning || phase === 'spinning'
-              ? 'bg-[#333333] opacity-50'
-              : 'bg-[#FF5C00] active:scale-95'
-          }`}
+          className="w-full py-4 rounded-full font-bold text-base text-white flex items-center justify-center gap-2 active:scale-95 transition-all"
+          style={{
+            background: isSpinning || phase === 'spinning' ? 'rgba(51,51,51,0.9)' : 'rgba(255,92,0,0.92)',
+            backdropFilter: 'blur(10px)',
+            WebkitBackdropFilter: 'blur(10px)',
+            boxShadow: isSpinning || phase === 'spinning' ? 'none' : '0 8px 24px rgba(255,92,0,0.4)',
+          }}
         >
           {isSpinning || phase === 'spinning' ? 'Крутим...' : `Крутить${quantity > 1 ? ` ×${quantity}` : ''}`}
           {phase !== 'spinning' && !isSpinning && (
-            <span className="flex items-center gap-1 bg-black/20 rounded-lg px-2 py-0.5 text-sm">
+            <span
+              className="flex items-center gap-1 rounded-lg px-2 py-0.5 text-sm font-semibold"
+              style={{ background: 'rgba(0,0,0,0.2)' }}
+            >
               <Diamond size={12} />
               {casePrice * quantity} RC
             </span>
@@ -236,6 +249,7 @@ export function CaseOpenPage() {
             setPhase('idle')
             setWonSkins([])
           }}
+          showTickets={showTickets}
         />
       )}
 
@@ -254,12 +268,14 @@ function ResultOverlay({
   onSell,
   onKeep,
   onSpinAgain,
+  showTickets,
 }: {
   wonSkins: MockSkin[]
   ticketsEarned: number
   onSell: () => void
   onKeep: () => void
   onSpinAgain: () => void
+  showTickets: boolean
 }) {
   const firstSkin = wonSkins[0] ?? MOCK_SKINS[0]
   const rarity = RARITY_COLORS[firstSkin.rarity]
@@ -270,10 +286,6 @@ function ResultOverlay({
         <p className="text-xs text-[#A0A0A0] uppercase tracking-widest font-semibold text-center">
           {wonSkins.length > 1 ? `Выбито ${wonSkins.length} скинов` : 'Выпало'}
         </p>
-        <div className="flex items-center gap-1.5 justify-center mt-2 mb-4">
-          <Ticket size={13} className="text-[#7C3AED]" />
-          <span className="text-xs font-bold text-[#7C3AED]">+{ticketsEarned} тикетов</span>
-        </div>
       </div>
 
       {wonSkins.length === 1 ? (
@@ -298,7 +310,7 @@ function ResultOverlay({
         </div>
       ) : (
         <div className="flex-1 overflow-y-auto px-4">
-          <div className="grid grid-cols-3 gap-2 pb-4">
+          <div className="grid grid-cols-3 gap-2 pb-48">
             {wonSkins.map((skin, i) => (
               <div
                 key={`${skin.id}-${i}`}
@@ -325,10 +337,23 @@ function ResultOverlay({
         </div>
       )}
 
-      <div className="flex-shrink-0 px-4 pb-6 pt-3">
+      {showTickets && (
+        <div
+          className="fixed top-16 left-1/2 z-50 flex items-center gap-1.5 bg-[#7C3AED]/20 border border-[#7C3AED]/40 rounded-xl px-3 py-1.5 pointer-events-none"
+          style={{
+            transform: 'translateX(-50%)',
+            animation: 'fadeInDown 0.4s ease-out, fadeOut 0.5s ease-in 2s forwards',
+          }}
+        >
+          <Ticket size={13} className="text-[#7C3AED]" />
+          <span className="text-xs font-bold text-[#7C3AED] whitespace-nowrap">+{ticketsEarned} тикетов</span>
+        </div>
+      )}
+
+      <div className="fixed bottom-28 left-4 right-4 z-40">
         <button
           onClick={onSpinAgain}
-          className="w-full py-3 bg-[#1A1A1A] border border-[#2A2A2A] rounded-2xl font-semibold text-sm text-[#A0A0A0] active:scale-95 transition-all mb-3"
+          className="w-full py-3 bg-[#1A1A1A] border border-[#2A2A2A] rounded-2xl font-semibold text-sm text-[#A0A0A0] active:scale-95 transition-all mb-2"
         >
           Крутить ещё
         </button>

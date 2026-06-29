@@ -101,7 +101,7 @@ export function HomePage() {
 
   return (
     // <div className="flex flex-col h-full gap-4 overflow-y-auto animate-fade-in bg-[#0D0D0D]">
-    <div className="flex flex-col min-h-screen gap-4 overflow-y-auto animate-fade-in bg-[#0D0D0D] pb-20">
+    <div className="flex flex-col min-h-screen gap-4 overflow-y-auto animate-fade-in bg-[#0D0D0D] pb-28">
       <div className="overflow-hidden bg-[#141414] border-b border-[#1A1A1A] w-full">
         <div className="flex animate-marquee w-max">
           {[...drops, ...drops].map((drop, i) => (

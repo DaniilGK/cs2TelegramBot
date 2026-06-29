@@ -56,7 +56,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   user: {
     id:       'demo-user',
     username: '',
-    balance:  0,
+    balance:  100000,
     coins:    0,
     tickets:  0,
     energy:   500,
